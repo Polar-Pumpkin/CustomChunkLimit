@@ -1,0 +1,14 @@
+name: CustomChunkLimit
+main: com.tany.customchunklimit.Main
+version: 1.0.1
+author: tany
+depend: [ProtocolLib]
+commands:
+  customchunklimit:
+    usage: /customchunklimit
+    aliases: [ccl]
+permissions: 
+  ccl.list: 
+    default: true
+  ccl.op: 
+    default: op
