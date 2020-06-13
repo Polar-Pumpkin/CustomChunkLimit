@@ -867,7 +867,7 @@ public class Event implements Listener {
 	    if(evt.getClickedInventory().getTitle().startsWith("§a已被§c限制§a物品列表第")) 
 	    {
 	    	evt.setCancelled(true);
-	    } 
+	    }
 	    else 
 	    {
 	    	return;
