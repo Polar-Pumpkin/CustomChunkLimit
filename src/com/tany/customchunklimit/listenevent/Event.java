@@ -136,7 +136,7 @@ public class Event implements Listener {
 		int number = 0;
 		if(!Other.config.getBoolean("Optimization")) {
 			Chunk[] chunklist = new Chunk[1];
-			if(Other.config.getBoolean("NineChunk")) {
+			if(!Other.config.getBoolean("NineChunk")) {
 				chunklist[0] = chunk;
 			} else if(Other.config.getBoolean("NineChunkImprove")) {
 				chunklist = new Chunk[25];
@@ -499,7 +499,7 @@ public class Event implements Listener {
 				limity = evt.getBlock().getY()+Other.config.getInt("YAxis");
 			}
 			Chunk[] chunklist = new Chunk[1];
-			if(Other.config.getBoolean("NineChunk")) {
+			if(!Other.config.getBoolean("NineChunk")) {
 				chunklist[0] = chunk;
 			} else if(Other.config.getBoolean("NineChunkImprove")) {
 				chunklist = new Chunk[25];
