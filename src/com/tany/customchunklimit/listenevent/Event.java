@@ -26,42 +26,93 @@ import com.tany.customchunklimit.Main;
 import com.tany.customchunklimit.Other;
 import com.tany.customchunklimit.gui.Gui;
 
+import de.tr7zw.nbtapi.NBTTileEntity;
+
+
+
+
+
 public class Event implements Listener {
     Plugin config = Bukkit.getPluginManager().getPlugin("CustomChunkLimit");
-//    File file=new File(config.getDataFolder(),"config.yml");
-    File file1=new File(config.getDataFolder(),"data.yml");
-//    File file2=new File(config.getDataFolder(),"message.yml");
+    File file=new File(config.getDataFolder(),"data.yml");
     
     @EventHandler
     public void Interact(PlayerInteractEvent evt) {
 		if(Main.Create.containsKey(evt.getPlayer().getName())) {
 			if(!(evt.getPlayer().getInventory().getItemInHand() == null || evt.getPlayer().getInventory().getItemInHand().getType() == Material.AIR)) {
-				if(evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-					String item = GetItemData(evt.getPlayer().getInventory().getItemInHand());
-					int limit = Main.Create.get(evt.getPlayer().getName());
-					String block = evt.getClickedBlock().getType().getId()+":"+evt.getClickedBlock().getData();
-					if(Other.data.getConfigurationSection("Block").getKeys(false).size()!=0) {
-						for(String blocks:Other.data.getConfigurationSection("Block").getKeys(false)) {
-							if(blocks.equals(block)) {
-								evt.getPlayer().sendMessage("§c这个方块已经被限制过了");
-								evt.setCancelled(true);
-								return;
+				evt.setCancelled(true);
+				String item = GetItemData(evt.getPlayer().getInventory().getItemInHand());
+				int limit = Main.Create.get(evt.getPlayer().getName());
+				String block = evt.getClickedBlock().getType().getId()+":"+evt.getClickedBlock().getData();
+				String a = "";
+				String b = "";
+				if(Other.data.getConfigurationSection("Block").getKeys(false).size()!=0) {
+					for(String blocks:Other.data.getConfigurationSection("Block").getKeys(false)) {
+						if(blocks.equals(block)) {
+							if(Other.config.getBoolean("Tile")) {
+								try {
+									String nbt = new NBTTileEntity(evt.getClickedBlock().getState()).toString();
+									if(Other.data.getString("Block."+blocks+".tile")!=null) {
+							    		nbt = nbt.replace("id:\"minecraft:air\"", "");
+							    		nbt = nbt.split("id:\"")[1];
+							    		nbt = nbt.split("\"")[0];
+							    		if(Other.data.getString("Block."+blocks+".tile").equals(nbt)) {
+							    			if(Other.config.getBoolean("Botania")) {
+								    			if(nbt.contains("botania:")&&Other.data.getString("Block."+blocks+".botania")!=null) {
+								    				nbt = new NBTTileEntity(evt.getClickedBlock().getState()).toString();
+								    				nbt = nbt.split("subTileName:\"")[1];
+								    				nbt = nbt.split("\"")[0];
+									        		if(!Other.data.getString("Block."+blocks+".botania").equals(nbt))
+									        			continue;
+								    			}
+							    			}
+							    		} else {
+							    			continue;
+							    		}
+									}
+								} catch (Exception e) {
+									if(Other.data.getString("Block."+blocks+".tile")!=null) {
+										continue;
+									}
+					        	}
 							}
+							evt.getPlayer().sendMessage("§c这个方块已经被限制过了");
+							evt.setCancelled(true);
+							return;
 						}
 					}
-					Other.data.set("Block."+block+".item", item);
-					Other.data.set("Block."+block+".limit", limit);
-			  		try {
-			  			Other.data.save(file1);
-			  		} catch (IOException e) {
-			  			e.printStackTrace();
-		        	}
-			  		evt.getPlayer().sendMessage("§a添加方块成功！");
-			  		Main.Create.remove(evt.getPlayer().getName());
-				} else {
-					evt.getPlayer().sendMessage("§c请右击方块");
 				}
-			}else {
+		  		try {
+		    		NBTTileEntity tile = new NBTTileEntity(evt.getClickedBlock().getState());
+		    		String nbt = tile.toString();
+		    		nbt = nbt.replace("id:\"minecraft:air\"", "");
+		    		nbt = nbt.split("id:\"")[1];
+		    		nbt = nbt.split("\"")[0];
+		    		String c = nbt;
+		    		a = ":"+nbt;
+					evt.getPlayer().sendMessage("§a检测到tile存在，已记录为：§e"+nbt);
+		    		if(nbt.contains("botania:")) {
+		    			nbt = tile.toString();
+		    			nbt = nbt.split("subTileName:\"")[1];
+		    			nbt = nbt.split("\"")[0];
+		        		b = ":"+nbt;
+						evt.getPlayer().sendMessage("§a检测到为植魔产能花，已记录为：§6"+nbt);
+						Other.data.set("Block."+block+a+b+".botania", nbt);
+		    		}
+					Other.data.set("Block."+block+a+b+".tile", c);
+		  		} catch (Exception e) {
+	        		
+	        	}
+				Other.data.set("Block."+block+a+b+".item", item);
+				Other.data.set("Block."+block+a+b+".limit", limit);
+		  		try {
+		  			Other.data.save(file);
+		  		} catch (IOException e) {
+		  			e.printStackTrace();
+	        	}
+		  		evt.getPlayer().sendMessage("§a添加方块成功！");
+		  		Main.Create.remove(evt.getPlayer().getName());
+			} else {
 				evt.getPlayer().sendMessage("§c手上不能为空！");
 			}
 			evt.setCancelled(true);
@@ -85,7 +136,7 @@ public class Event implements Listener {
 					Other.data.set("Block."+block+".item", item);
 					Other.data.set("Block."+block+".limit", limit);
 			  		try {
-			  			Other.data.save(file1);
+			  			Other.data.save(file);
 			  		} catch (IOException e) {
 			  			e.printStackTrace();
 		        	}
@@ -423,6 +474,46 @@ public class Event implements Listener {
 							block = chunks.getBlock(x, y, z);
 							if(block.getType()!=evt.getBlock().getType()||block.getData()!=evt.getBlock().getData())
 								continue;
+							if(Other.config.getBoolean("Tile")) {
+								try {
+									new NBTTileEntity(block.getState()).toString();
+									try {
+										new NBTTileEntity(evt.getBlock().getState()).toString();
+										String nbt = new NBTTileEntity(block.getState()).toString();
+										String getnbt = new NBTTileEntity(evt.getBlock().getState()).toString();
+							    		nbt = nbt.replace("id:\"minecraft:air\"", "");
+							    		nbt = nbt.split("id:\"")[1];
+							    		nbt = nbt.split("\"")[0];
+							    		getnbt = getnbt.replace("id:\"minecraft:air\"", "");
+							    		getnbt = getnbt.split("id:\"")[1];
+							    		getnbt = getnbt.split("\"")[0];
+							    		if(nbt.equals(getnbt)) {
+							    			if(Other.config.getBoolean("Botania")) {
+												nbt = new NBTTileEntity(block.getState()).toString();
+												getnbt = new NBTTileEntity(evt.getBlock().getState()).toString();
+												nbt = nbt.split("subTileName:\"")[1];
+												nbt = nbt.split("\"")[0];
+												getnbt = getnbt.split("subTileName:\"")[1];
+												getnbt = getnbt.split("\"")[0];
+												if(!nbt.equals(getnbt)) {
+													continue;
+												}
+							    			}
+							    		} else {
+							    			continue;
+							    		}
+									} catch (Exception d) {
+										continue;
+									}
+								} catch (Exception e) {
+									try {
+										new NBTTileEntity(evt.getBlock().getState()).toString();
+										continue;
+									} catch (Exception d) {
+										
+									}
+								}
+							}
 							for(String limitstring:Other.data.getConfigurationSection("Block").getKeys(false)) {
 								int id = Integer.parseInt(limitstring.split(":")[0]);
 								int data = Integer.parseInt(limitstring.split(":")[1]);
@@ -452,6 +543,34 @@ public class Event implements Listener {
 									}
 								} else {
 									if(block.getTypeId()==id&&block.getData()==data) {
+										if(Other.config.getBoolean("Tile")) {
+											try {
+												String nbt = new NBTTileEntity(block.getState()).toString();
+												if(Other.data.getString("Block."+limitstring+".tile")!=null) {
+										    		nbt = nbt.replace("id:\"minecraft:air\"", "");
+										    		nbt = nbt.split("id:\"")[1];
+										    		nbt = nbt.split("\"")[0];
+										    		if(Other.data.getString("Block."+limitstring+".tile").equals(nbt)) {
+										    			if(Other.config.getBoolean("Botania")) {
+											    			if(nbt.contains("botania:")&&Other.data.getString("Block."+limitstring+".botania")!=null) {
+											    				nbt = new NBTTileEntity(block.getState()).toString();
+											    				nbt = nbt.split("subTileName:\"")[1];
+											    				nbt = nbt.split("\"")[0];
+												        		if(!Other.data.getString("Block."+limitstring+".botania").equals(nbt)) {
+												        			continue;
+												        		}
+											    			}
+										    			}
+										    		} else {
+										    			continue;
+										    		}
+												}
+											} catch (Exception e) {
+												if(Other.data.getString("Block."+limitstring+".tile")!=null) {
+													continue;
+												}
+								        	}
+										}
 										if(number==0) {
 											limit = Other.data.getInt("Block."+limitstring+".limit");
 											for(PermissionAttachmentInfo p:evt.getPlayer().getEffectivePermissions()) {
@@ -785,6 +904,46 @@ public class Event implements Listener {
 							block = chunks.getBlock(x, y, z);
 							if(block.getType()!=evt.getBlock().getType()||block.getData()!=evt.getBlock().getData())
 								continue;
+							if(Other.config.getBoolean("Tile")) {
+								try {
+									new NBTTileEntity(block.getState()).toString();
+									try {
+										new NBTTileEntity(evt.getBlock().getState()).toString();
+										String nbt = new NBTTileEntity(block.getState()).toString();
+										String getnbt = new NBTTileEntity(evt.getBlock().getState()).toString();
+							    		nbt = nbt.replace("id:\"minecraft:air\"", "");
+							    		nbt = nbt.split("id:\"")[1];
+							    		nbt = nbt.split("\"")[0];
+							    		getnbt = getnbt.replace("id:\"minecraft:air\"", "");
+							    		getnbt = getnbt.split("id:\"")[1];
+							    		getnbt = getnbt.split("\"")[0];
+							    		if(nbt.equals(getnbt)) {
+							    			if(Other.config.getBoolean("Botania")) {
+												nbt = new NBTTileEntity(block.getState()).toString();
+												getnbt = new NBTTileEntity(evt.getBlock().getState()).toString();
+												nbt = nbt.split("subTileName:\"")[1];
+												nbt = nbt.split("\"")[0];
+												getnbt = getnbt.split("subTileName:\"")[1];
+												getnbt = getnbt.split("\"")[0];
+												if(!nbt.equals(getnbt)) {
+													continue;
+												}
+							    			}
+							    		} else {
+							    			continue;
+							    		}
+									} catch (Exception d) {
+										continue;
+									}
+								} catch (Exception e) {
+									try {
+										new NBTTileEntity(evt.getBlock().getState()).toString();
+										continue;
+									} catch (Exception d) {
+										
+									}
+								}
+							}
 							for(String limitstring:Other.data.getConfigurationSection("Block").getKeys(false)) {
 								int id = Integer.parseInt(limitstring.split(":")[0]);
 								int data = Integer.parseInt(limitstring.split(":")[1]);
@@ -814,6 +973,33 @@ public class Event implements Listener {
 									}
 								} else {
 									if(block.getTypeId()==id&&block.getData()==data) {
+										if(Other.config.getBoolean("Tile")) {
+											try {
+												String nbt = new NBTTileEntity(block.getState()).toString();
+												if(Other.data.getString("Block."+limitstring+".tile")!=null) {
+										    		nbt = nbt.replace("id:\"minecraft:air\"", "");
+										    		nbt = nbt.split("id:\"")[1];
+										    		nbt = nbt.split("\"")[0];
+										    		if(Other.data.getString("Block."+limitstring+".tile").equals(nbt)) {
+										    			if(Other.config.getBoolean("Botania")) {
+											    			if(nbt.contains("botania:")&&Other.data.getString("Block."+limitstring+".botania")!=null) {
+											    				nbt = new NBTTileEntity(block.getState()).toString();
+											    				nbt = nbt.split("subTileName:\"")[1];
+												        		nbt = nbt.split("\"")[0];
+												        		if(!Other.data.getString("Block."+limitstring+".botania").equals(nbt))
+												        			continue;
+											    			}
+										    			}
+										    		} else {
+										    			continue;
+										    		}
+												}
+											} catch (Exception e) {
+												if(Other.data.getString("Block."+limitstring+".tile")!=null) {
+													continue;
+												}
+								        	}
+										}
 										if(number==0) {
 											limit = Other.data.getInt("Block."+limitstring+".limit");
 											for(PermissionAttachmentInfo p:evt.getPlayer().getEffectivePermissions()) {
@@ -894,34 +1080,57 @@ public class Event implements Listener {
 	    }
 	    if(player.isOp()) 
 	    {
-	    	for(String lore:evt.getCurrentItem().getItemMeta().getLore()) {
-	    		if(lore.startsWith("§a被限制的方块ID:§6")) {
-					if(lore.contains("§a下的所有同主ID")) {
-		    			String id = lore.replace("§a被限制的方块ID:§6", "").replace("§a下的所有同主ID", "");
-		    			Other.data.set("Block."+id+":999", null);
-					} else {
-		    			String id = lore.replace("§a被限制的方块ID:§6", "").replace("§a下的所有同主ID", "");
-		    			Other.data.set("Block."+id, null);
-					}
-	    			try {
-						Other.data.save(file1);
-					} catch (IOException e) {
-						// TODO 自动生成的 catch 块
-						e.printStackTrace();
-					}
-	    			player.sendMessage("§a成功移除");
-	    			for(Player players:Bukkit.getServer().getOnlinePlayers()) {
-	    				if(players.getOpenInventory().getTitle().startsWith("§a已被§c限制§a物品列表第")) {
-	    					int pager = Integer.parseInt(player.getOpenInventory().getTitle().replace("§a已被§c限制§a物品列表第", "").replace("页", ""));
-	    					players.closeInventory();
-	    					Gui.list(players, pager);
+    	for(String lore:evt.getCurrentItem().getItemMeta().getLore()) {
+    		if(lore.startsWith("§a被限制的方块ID: §6")) {
+				if(lore.contains("§a下的所有同主ID")) {
+	    			String id = lore.replace("§a被限制的方块ID:§6", "").replace("§a下的所有同主ID", "");
+	    			String tile = "";
+	    			String botania = "";
+	    			for(String lores:evt.getCurrentItem().getItemMeta().getLore()) {
+	    				if(lores.startsWith("§a被禁用方块的tile§2: §6")) {
+	    					tile = ":"+lores.replace("§a被禁用方块的tile§2: §6", "");
 	    				}
 	    			}
-	    			return;
-	    		}
-	    	}
+	    			for(String loress:evt.getCurrentItem().getItemMeta().getLore()) {
+	    				if(loress.startsWith("§a被禁用的产能花为§2：§6")) {
+	    					botania = ":"+loress.replace("§a被禁用的产能花为§2：§6", "");
+	    				}
+	    			}
+	    			Other.data.set("Block."+id+":999"+tile+botania, null);
+				} else {
+	    			String id = lore.replace("§a被限制的方块ID: §6", "").replace("§a下的所有同主ID", "");
+	    			String tile = "";
+	    			String botania = "";
+	    			for(String lores:evt.getCurrentItem().getItemMeta().getLore()) {
+	    				if(lores.startsWith("§a被禁用方块的tile§2: §6")) {
+	    					tile = ":"+lores.replace("§a被禁用方块的tile§2: §6", "");
+	    				}
+	    			}
+	    			for(String loress:evt.getCurrentItem().getItemMeta().getLore()) {
+	    				if(loress.startsWith("§a被禁用的产能花为§2：§6")) {
+	    					botania = ":"+loress.replace("§a被禁用的产能花为§2：§6", "");
+	    				}
+	    			}
+	    			Other.data.set("Block."+id+tile+botania, null);
+				}
+    			try {
+					Other.data.save(file);
+				} catch (IOException e) {
+					// TODO 自动生成的 catch 块
+					e.printStackTrace();
+				}
+    			player.sendMessage("§a成功移除");
+    			for(Player players:Bukkit.getServer().getOnlinePlayers()) {
+    				if(players.getOpenInventory().getTitle().startsWith("§a已被§c限制§a物品列表第")) {
+    					int pager = Integer.parseInt(player.getOpenInventory().getTitle().replace("§a已被§c限制§a物品列表第", "").replace("页", ""));
+    					players.closeInventory();
+    					Gui.list(players, pager);
+    				}
+    			}
+    			return;
+    		}
+    	}
 	    }
-	    
 	}
 	
 //	ItemStack转String

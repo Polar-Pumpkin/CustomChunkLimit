@@ -71,8 +71,15 @@ public class Gui {
         	int limit = Other.data.getInt("Block."+types+".limit");
         	ItemStack item = Way.GetItemStack(Other.data.getString("Block."+types+".item"));
         	ItemMeta itemdata = item.getItemMeta();
-        	if(DataID!=999)
-        		lore.add("§a被限制的方块ID:§6"+types);
+        	if(DataID!=999) {
+        		lore.add("§a被限制的方块ID: §6"+ID+":"+DataID);
+        		if(Other.data.getString("Block."+types+".tile")!=null) {
+        			lore.add("§a被禁用方块的tile§2: §6"+Other.data.getString("Block."+types+".tile"));
+        			if(Other.data.getString("Block."+types+".botania")!=null) {
+        				lore.add("§a被禁用的产能花为§2：§6"+Other.data.getString("Block."+types+".botania"));
+        			}
+        		}
+        	}
         	else
         		lore.add("§a被限制的方块ID:§6"+ID+"§a下的所有同主ID");
         	lore.add("§a每设置区块被限制的数量:§e"+limit+"§a个方块");

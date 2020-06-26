@@ -100,7 +100,7 @@ public class Commands implements CommandExecutor {
 					return true;
 				}
 				Main.CreateAll.put(player.getName(),limit);
-				player.sendMessage("§a请拿着你要展示的物品，右键你要限制的方块");
+				player.sendMessage("§a请拿着你要展示的物品，点击你要限制的方块");
 				return true;
 			}
 			return true;
