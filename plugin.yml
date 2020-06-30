@@ -6,7 +6,7 @@ depend: [ProtocolLib,NBTAPI]
 commands:
   customchunklimit:
     usage: /customchunklimit
-    aliases: [ccls]
+    aliases: [ccl]
 permissions: 
   ccl.list: 
     default: true
