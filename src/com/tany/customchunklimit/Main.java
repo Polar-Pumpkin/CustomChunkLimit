@@ -19,7 +19,7 @@ public class Main extends JavaPlugin{
 	public static HashMap<String, Integer> CreateAll = new HashMap<String, Integer>();
 	public static ProtocolManager pm;
 	public void onEnable() {
-		Bukkit.getConsoleSender().sendMessage("¡ìe[¡ì6Custom¡ìeChunk¡ì6Limit¡ìe]¡ìa²å¼şÒÑ¼ÓÔØ");
+		Bukkit.getConsoleSender().sendMessage("Â§e[Â§6CustomÂ§eChunkÂ§6LimitÂ§e]Â§aæ’ä»¶å·²åŠ è½½");
 	    if (!new File(getDataFolder(), "config.yml").exists()) 
 	    	saveDefaultConfig();
 	    
@@ -31,10 +31,10 @@ public class Main extends JavaPlugin{
 	    
 	    pm = ProtocolLibrary.getProtocolManager();
 	    plugin = this;
-	    getCommand("ccls").setExecutor(new Commands());
+	    getCommand("ccl").setExecutor(new Commands());
 	    getServer().getPluginManager().registerEvents(new Event(), this);
 	}
 	public void onDisable() {
-		Bukkit.getConsoleSender().sendMessage("¡ìe[¡ì6Chunk¡ìeBlock¡ì6Limit¡ìe]¡ìc²å¼şÒÑĞ¶ÔØ");
+		Bukkit.getConsoleSender().sendMessage("Â§e[Â§6ChunkÂ§eBlockÂ§6LimitÂ§e]Â§cæ’ä»¶å·²å¸è½½");
 	}
 }
