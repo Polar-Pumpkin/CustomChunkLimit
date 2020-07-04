@@ -1,4 +1,4 @@
-package com.tany.customchunklimit;
+package pers.tany.customchunklimit;
 
 import java.io.File;
 import java.util.HashMap;
@@ -9,8 +9,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.tany.customchunklimit.command.Commands;
-import com.tany.customchunklimit.listenevent.Event;
+
+import de.tr7zw.nbtinjector.NBTInjector;
+import pers.tany.customchunklimit.command.Commands;
+import pers.tany.customchunklimit.listenevent.Event;
 
 public class Main extends JavaPlugin{
 	public static Boolean open = false;
@@ -19,7 +21,7 @@ public class Main extends JavaPlugin{
 	public static HashMap<String, Integer> CreateAll = new HashMap<String, Integer>();
 	public static ProtocolManager pm;
 	public void onEnable() {
-		Bukkit.getConsoleSender().sendMessage("Â§e[Â§6CustomÂ§eChunkÂ§6LimitÂ§e]Â§aæ’ä»¶å·²åŠ è½½");
+		Bukkit.getConsoleSender().sendMessage("¡ìe[¡ì6Custom¡ìeChunk¡ì6Limit¡ìe]¡ìa²å¼şÒÑ¼ÓÔØ");
 	    if (!new File(getDataFolder(), "config.yml").exists()) 
 	    	saveDefaultConfig();
 	    
@@ -35,6 +37,6 @@ public class Main extends JavaPlugin{
 	    getServer().getPluginManager().registerEvents(new Event(), this);
 	}
 	public void onDisable() {
-		Bukkit.getConsoleSender().sendMessage("Â§e[Â§6ChunkÂ§eBlockÂ§6LimitÂ§e]Â§cæ’ä»¶å·²å¸è½½");
+		Bukkit.getConsoleSender().sendMessage("¡ìe[¡ì6Chunk¡ìeBlock¡ì6Limit¡ìe]¡ìc²å¼şÒÑĞ¶ÔØ");
 	}
 }

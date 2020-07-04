@@ -1,4 +1,4 @@
-package com.tany.customchunklimit;
+package pers.tany.customchunklimit;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

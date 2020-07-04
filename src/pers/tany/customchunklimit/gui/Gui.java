@@ -1,4 +1,4 @@
-package com.tany.customchunklimit.gui;
+package pers.tany.customchunklimit.gui;
 
 import java.util.ArrayList;
 import org.bukkit.Bukkit;
@@ -10,8 +10,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import com.comphenix.protocol.utility.StreamSerializer;
-import com.tany.customchunklimit.Other;
-import com.tany.customchunklimit.Way;
+
+import pers.tany.customchunklimit.Other;
+import pers.tany.customchunklimit.Way;
 
 public class Gui {
 	public static void list(Player player,int type){

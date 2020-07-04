@@ -1,4 +1,4 @@
-package com.tany.customchunklimit;
+package pers.tany.customchunklimit;
 
 import java.io.File;
 
