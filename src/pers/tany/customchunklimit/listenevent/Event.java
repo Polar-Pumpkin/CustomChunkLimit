@@ -39,9 +39,6 @@ public class Event implements Listener {
 				evt.setCancelled(true);
 				String item = GetItemData(evt.getPlayer().getInventory().getItemInHand());
 				int limit = Main.Create.get(evt.getPlayer().getName());
-//				Bukkit.broadcastMessage(evt.getClickedBlock().toString().replace(".", ""));
-//				Bukkit.broadcastMessage(evt.getClickedBlock().getTypeId()+"");
-//				Bukkit.broadcastMessage(evt.getClickedBlock().getData()+"");
 				String block = evt.getClickedBlock().getType().getId()+":"+evt.getClickedBlock().getData();
 				String a = "";
 				String b = "";
@@ -487,7 +484,7 @@ public class Event implements Listener {
 							    		getnbt = getnbt.split("id:\"")[1];
 							    		getnbt = getnbt.split("\"")[0];
 							    		if(nbt.equals(getnbt)) {
-							    			if(Other.config.getBoolean("Botania")) {
+							    			if(Other.config.getBoolean("Botania")&&nbt.contains("botania:")&&getnbt.contains("botania:")) {
 												nbt = new NBTTileEntity(block.getState()).toString().replace(".", "");
 												getnbt = new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
 												nbt = nbt.split("subTileName:\"")[1];
@@ -917,7 +914,7 @@ public class Event implements Listener {
 							    		getnbt = getnbt.split("id:\"")[1];
 							    		getnbt = getnbt.split("\"")[0];
 							    		if(nbt.equals(getnbt)) {
-							    			if(Other.config.getBoolean("Botania")) {
+							    			if(Other.config.getBoolean("Botania")&&nbt.contains("botania:")&&getnbt.contains("botania:")) {
 												nbt = new NBTTileEntity(block.getState()).toString().replace(".", "");
 												getnbt = new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
 												nbt = nbt.split("subTileName:\"")[1];
