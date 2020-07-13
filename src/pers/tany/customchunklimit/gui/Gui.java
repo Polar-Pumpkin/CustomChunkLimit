@@ -9,8 +9,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.comphenix.protocol.utility.StreamSerializer;
-
 import pers.tany.customchunklimit.Other;
 import pers.tany.customchunklimit.Way;
 

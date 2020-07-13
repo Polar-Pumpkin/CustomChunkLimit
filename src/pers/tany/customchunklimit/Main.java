@@ -7,10 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-
-import de.tr7zw.nbtinjector.NBTInjector;
 import pers.tany.customchunklimit.command.Commands;
 import pers.tany.customchunklimit.listenevent.Event;
 
@@ -19,7 +15,6 @@ public class Main extends JavaPlugin{
 	public static Plugin plugin;
 	public static HashMap<String, Integer> Create = new HashMap<String, Integer>();
 	public static HashMap<String, Integer> CreateAll = new HashMap<String, Integer>();
-	public static ProtocolManager pm;
 	public void onEnable() {
 		Bukkit.getConsoleSender().sendMessage("°Ïe[°Ï6Custom°ÏeChunk°Ï6Limit°Ïe]°Ïa≤Âº˛“—º”‘ÿ");
 	    if (!new File(getDataFolder(), "config.yml").exists()) 
@@ -31,7 +26,6 @@ public class Main extends JavaPlugin{
 	    if (!new File(getDataFolder(), "message.yml").exists())
 	    	saveResource("message.yml",false);
 	    
-	    pm = ProtocolLibrary.getProtocolManager();
 	    plugin = this;
 	    getCommand("ccl").setExecutor(new Commands());
 	    getServer().getPluginManager().registerEvents(new Event(), this);
