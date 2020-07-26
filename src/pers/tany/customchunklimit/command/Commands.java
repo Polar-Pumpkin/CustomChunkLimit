@@ -38,6 +38,10 @@ public class Commands implements CommandExecutor {
 				return true;
 			}
 			if(args[0].equalsIgnoreCase("reload")) {
+				if(!sender.isOp()) {
+					sender.sendMessage("§c你没有权限使用此指令");
+					return true;
+				}
 				Other.config = YamlConfiguration.loadConfiguration(file);
 				Other.data = YamlConfiguration.loadConfiguration(file1);
 				Other.message = YamlConfiguration.loadConfiguration(file2);

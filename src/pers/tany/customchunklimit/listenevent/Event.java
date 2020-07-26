@@ -118,7 +118,7 @@ public class Event implements Listener {
 		}
 		if(Main.CreateAll.containsKey(evt.getPlayer().getName())) {
 			if(!(evt.getPlayer().getInventory().getItemInHand() == null || evt.getPlayer().getInventory().getItemInHand().getType() == Material.AIR)) {
-				if(evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+				if(evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)||evt.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
 					String item = GetItemData(evt.getPlayer().getInventory().getItemInHand());
 					int limit = Main.CreateAll.get(evt.getPlayer().getName());
 					String block = evt.getClickedBlock().getType().getId()+":999";
@@ -141,7 +141,7 @@ public class Event implements Listener {
 			  		evt.getPlayer().sendMessage("§a添加方块成功！");
 			  		Main.CreateAll.remove(evt.getPlayer().getName());
 				} else {
-					evt.getPlayer().sendMessage("§c请右击方块");
+					evt.getPlayer().sendMessage("§c请点击方块");
 				}
 			}else {
 				evt.getPlayer().sendMessage("§c手上不能为空！");
@@ -470,48 +470,8 @@ public class Event implements Listener {
 					for(int z=0;z<16;z++) {
 						for(int y=0;y<256;y++) {
 							block = chunks.getBlock(x, y, z);
-							if(block.getType()!=evt.getBlock().getType()||block.getData()!=evt.getBlock().getData())
+							if(block.getType()!=evt.getBlock().getType())
 								continue;
-							if(Other.config.getBoolean("Tile")) {
-								try {
-									new NBTTileEntity(block.getState()).toString().replace(".", "");
-									try {
-										new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
-										String nbt = new NBTTileEntity(block.getState()).toString().replace(".", "");
-										String getnbt = new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
-							    		nbt = nbt.replace("id:\"minecraft:air\"", "");
-							    		nbt = nbt.split("id:\"")[1];
-							    		nbt = nbt.split("\"")[0];
-							    		getnbt = getnbt.replace("id:\"minecraft:air\"", "");
-							    		getnbt = getnbt.split("id:\"")[1];
-							    		getnbt = getnbt.split("\"")[0];
-							    		if(nbt.equals(getnbt)) {
-							    			if(Other.config.getBoolean("Botania")&&nbt.contains("botania:")&&getnbt.contains("botania:")) {
-												nbt = new NBTTileEntity(block.getState()).toString().replace(".", "");
-												getnbt = new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
-												nbt = nbt.split("subTileName:\"")[1];
-												nbt = nbt.split("\"")[0];
-												getnbt = getnbt.split("subTileName:\"")[1];
-												getnbt = getnbt.split("\"")[0];
-												if(!nbt.equals(getnbt)) {
-													continue;
-												}
-							    			}
-							    		} else {
-							    			continue;
-							    		}
-									} catch (Exception d) {
-										continue;
-									}
-								} catch (Exception e) {
-									try {
-										new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
-										continue;
-									} catch (Exception d) {
-										
-									}
-								}
-							}
 							for(String limitstring:Other.data.getConfigurationSection("Block").getKeys(false)) {
 								int id = Integer.parseInt(limitstring.split(":")[0]);
 								int data = Integer.parseInt(limitstring.split(":")[1]);
@@ -540,6 +500,46 @@ public class Event implements Listener {
 										}
 									}
 								} else {
+									if(Other.config.getBoolean("Tile")) {
+										try {
+											new NBTTileEntity(block.getState()).toString().replace(".", "");
+											try {
+												new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
+												String nbt = new NBTTileEntity(block.getState()).toString().replace(".", "");
+												String getnbt = new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
+									    		nbt = nbt.replace("id:\"minecraft:air\"", "");
+									    		nbt = nbt.split("id:\"")[1];
+									    		nbt = nbt.split("\"")[0];
+									    		getnbt = getnbt.replace("id:\"minecraft:air\"", "");
+									    		getnbt = getnbt.split("id:\"")[1];
+									    		getnbt = getnbt.split("\"")[0];
+									    		if(nbt.equals(getnbt)) {
+									    			if(Other.config.getBoolean("Botania")&&nbt.contains("botania:")&&getnbt.contains("botania:")) {
+														nbt = new NBTTileEntity(block.getState()).toString().replace(".", "");
+														getnbt = new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
+														nbt = nbt.split("subTileName:\"")[1];
+														nbt = nbt.split("\"")[0];
+														getnbt = getnbt.split("subTileName:\"")[1];
+														getnbt = getnbt.split("\"")[0];
+														if(!nbt.equals(getnbt)) {
+															continue;
+														}
+									    			}
+									    		} else {
+									    			continue;
+									    		}
+											} catch (Exception d) {
+												continue;
+											}
+										} catch (Exception e) {
+											try {
+												new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
+												continue;
+											} catch (Exception d) {
+												
+											}
+										}
+									}
 									if(block.getTypeId()==id&&block.getData()==data) {
 										if(Other.config.getBoolean("Tile")) {
 											try {
@@ -900,48 +900,8 @@ public class Event implements Listener {
 					for(int z=0;z<16;z++) {
 						for(int y=customy;y<=limity;y++) {
 							block = chunks.getBlock(x, y, z);
-							if(block.getType()!=evt.getBlock().getType()||block.getData()!=evt.getBlock().getData())
+							if(block.getType()!=evt.getBlock().getType())
 								continue;
-							if(Other.config.getBoolean("Tile")) {
-								try {
-									new NBTTileEntity(block.getState()).toString().replace(".", "");
-									try {
-										new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
-										String nbt = new NBTTileEntity(block.getState()).toString().replace(".", "");
-										String getnbt = new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
-							    		nbt = nbt.replace("id:\"minecraft:air\"", "");
-							    		nbt = nbt.split("id:\"")[1];
-							    		nbt = nbt.split("\"")[0];
-							    		getnbt = getnbt.replace("id:\"minecraft:air\"", "");
-							    		getnbt = getnbt.split("id:\"")[1];
-							    		getnbt = getnbt.split("\"")[0];
-							    		if(nbt.equals(getnbt)) {
-							    			if(Other.config.getBoolean("Botania")&&nbt.contains("botania:")&&getnbt.contains("botania:")) {
-												nbt = new NBTTileEntity(block.getState()).toString().replace(".", "");
-												getnbt = new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
-												nbt = nbt.split("subTileName:\"")[1];
-												nbt = nbt.split("\"")[0];
-												getnbt = getnbt.split("subTileName:\"")[1];
-												getnbt = getnbt.split("\"")[0];
-												if(!nbt.equals(getnbt)) {
-													continue;
-												}
-							    			}
-							    		} else {
-							    			continue;
-							    		}
-									} catch (Exception d) {
-										continue;
-									}
-								} catch (Exception e) {
-									try {
-										new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
-										continue;
-									} catch (Exception d) {
-										
-									}
-								}
-							}
 							for(String limitstring:Other.data.getConfigurationSection("Block").getKeys(false)) {
 								int id = Integer.parseInt(limitstring.split(":")[0]);
 								int data = Integer.parseInt(limitstring.split(":")[1]);
@@ -970,6 +930,46 @@ public class Event implements Listener {
 										}
 									}
 								} else {
+									if(Other.config.getBoolean("Tile")) {
+										try {
+											new NBTTileEntity(block.getState()).toString().replace(".", "");
+											try {
+												new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
+												String nbt = new NBTTileEntity(block.getState()).toString().replace(".", "");
+												String getnbt = new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
+									    		nbt = nbt.replace("id:\"minecraft:air\"", "");
+									    		nbt = nbt.split("id:\"")[1];
+									    		nbt = nbt.split("\"")[0];
+									    		getnbt = getnbt.replace("id:\"minecraft:air\"", "");
+									    		getnbt = getnbt.split("id:\"")[1];
+									    		getnbt = getnbt.split("\"")[0];
+									    		if(nbt.equals(getnbt)) {
+									    			if(Other.config.getBoolean("Botania")&&nbt.contains("botania:")&&getnbt.contains("botania:")) {
+														nbt = new NBTTileEntity(block.getState()).toString().replace(".", "");
+														getnbt = new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
+														nbt = nbt.split("subTileName:\"")[1];
+														nbt = nbt.split("\"")[0];
+														getnbt = getnbt.split("subTileName:\"")[1];
+														getnbt = getnbt.split("\"")[0];
+														if(!nbt.equals(getnbt)) {
+															continue;
+														}
+									    			}
+									    		} else {
+									    			continue;
+									    		}
+											} catch (Exception d) {
+												continue;
+											}
+										} catch (Exception e) {
+											try {
+												new NBTTileEntity(evt.getBlock().getState()).toString().replace(".", "");
+												continue;
+											} catch (Exception d) {
+												
+											}
+										}
+									}
 									if(block.getTypeId()==id&&block.getData()==data) {
 										if(Other.config.getBoolean("Tile")) {
 											try {
@@ -1048,14 +1048,18 @@ public class Event implements Listener {
 		{
 			return;
 		}
-	    if(evt.getClickedInventory().getTitle().startsWith("§a已被§c限制§a物品列表第")) 
-	    {
-	    	evt.setCancelled(true);
-	    }
-	    else 
-	    {
-	    	return;
-	    }
+		try {
+		    if(evt.getClickedInventory().getTitle().startsWith("§a已被§c限制§a物品列表第")) 
+		    {
+		    	evt.setCancelled(true);
+		    }
+		    else 
+		    {
+		    	return;
+		    }
+		} catch(NullPointerException a) {
+			return;
+		}
 	    if(evt.getCurrentItem().getType().equals(Material.AIR)) 
 	    {
 	    	return;
@@ -1076,58 +1080,58 @@ public class Event implements Listener {
 	    {
 	    	return;
 	    }
-	    if(player.isOp()) 
-	    {
-    	for(String lore:evt.getCurrentItem().getItemMeta().getLore()) {
-    		if(lore.startsWith("§a被限制的方块ID: §6")) {
-				if(lore.contains("§a下的所有同主ID")) {
-	    			String id = lore.replace("§a被限制的方块ID:§6", "").replace("§a下的所有同主ID", "");
-	    			String tile = "";
-	    			String botania = "";
-	    			for(String lores:evt.getCurrentItem().getItemMeta().getLore()) {
-	    				if(lores.startsWith("§a被禁用方块的tile§2: §6")) {
-	    					tile = ":"+lores.replace("§a被禁用方块的tile§2: §6", "");
-	    				}
-	    			}
-	    			for(String loress:evt.getCurrentItem().getItemMeta().getLore()) {
-	    				if(loress.startsWith("§a被禁用的产能花为§2：§6")) {
-	    					botania = ":"+loress.replace("§a被禁用的产能花为§2：§6", "");
-	    				}
-	    			}
-	    			Other.data.set("Block."+id+":999"+tile+botania, null);
-				} else {
-	    			String id = lore.replace("§a被限制的方块ID: §6", "").replace("§a下的所有同主ID", "");
-	    			String tile = "";
-	    			String botania = "";
-	    			for(String lores:evt.getCurrentItem().getItemMeta().getLore()) {
-	    				if(lores.startsWith("§a被禁用方块的tile§2: §6")) {
-	    					tile = ":"+lores.replace("§a被禁用方块的tile§2: §6", "");
-	    				}
-	    			}
-	    			for(String loress:evt.getCurrentItem().getItemMeta().getLore()) {
-	    				if(loress.startsWith("§a被禁用的产能花为§2：§6")) {
-	    					botania = ":"+loress.replace("§a被禁用的产能花为§2：§6", "");
-	    				}
-	    			}
-	    			Other.data.set("Block."+id+tile+botania, null);
+	    if(player.isOp()) {
+			for(String lore:evt.getCurrentItem().getItemMeta().getLore()) {
+				if(lore.startsWith("§a被限制的方块ID: §6")) {
+					if(lore.contains("§a下的所有同主ID")) {
+		    			String id = lore.replace("§a被限制的方块ID: §6", "").replace("§a下的所有同主ID", "");
+		    			Other.data.set("Block."+id+":999", null);
+		    			try {
+		    				Other.data.save(file);
+		    			} catch (IOException e) {
+		    				e.printStackTrace();
+		    			}
+		    			player.sendMessage("§a成功移除");
+		    			for(Player players:Bukkit.getServer().getOnlinePlayers()) {
+		    				if(players.getOpenInventory().getTitle().startsWith("§a已被§c限制§a物品列表第")) {
+		    					int pager = Integer.parseInt(player.getOpenInventory().getTitle().replace("§a已被§c限制§a物品列表第", "").replace("页", ""));
+		    					players.closeInventory();
+		    					Gui.list(players, pager);
+		    				}
+		    			}
+		    			return;
+					} else {
+		    			String id = lore.replace("§a被限制的方块ID: §6", "");
+		    			String tile = "";
+		    			String botania = "";
+		    			for(String lores:evt.getCurrentItem().getItemMeta().getLore()) {
+		    				if(lores.startsWith("§a被禁用方块的tile§2: §6")) {
+		    					tile = ":"+lores.replace("§a被禁用方块的tile§2: §6", "");
+		    				}
+		    			}
+		    			for(String loress:evt.getCurrentItem().getItemMeta().getLore()) {
+		    				if(loress.startsWith("§a被禁用的产能花为§2：§6")) {
+		    					botania = ":"+loress.replace("§a被禁用的产能花为§2：§6", "");
+		    				}
+		    			}
+		    			Other.data.set("Block."+id+tile+botania, null);
+		    			try {
+		    				Other.data.save(file);
+		    			} catch (IOException e) {
+		    				e.printStackTrace();
+		    			}
+		    			player.sendMessage("§a成功移除");
+		    			for(Player players:Bukkit.getServer().getOnlinePlayers()) {
+		    				if(players.getOpenInventory().getTitle().startsWith("§a已被§c限制§a物品列表第")) {
+		    					int pager = Integer.parseInt(player.getOpenInventory().getTitle().replace("§a已被§c限制§a物品列表第", "").replace("页", ""));
+		    					players.closeInventory();
+		    					Gui.list(players, pager);
+		    				}
+		    			}
+		    			return;
+					}
 				}
-    			try {
-					Other.data.save(file);
-				} catch (IOException e) {
-					// TODO 自动生成的 catch 块
-					e.printStackTrace();
-				}
-    			player.sendMessage("§a成功移除");
-    			for(Player players:Bukkit.getServer().getOnlinePlayers()) {
-    				if(players.getOpenInventory().getTitle().startsWith("§a已被§c限制§a物品列表第")) {
-    					int pager = Integer.parseInt(player.getOpenInventory().getTitle().replace("§a已被§c限制§a物品列表第", "").replace("页", ""));
-    					players.closeInventory();
-    					Gui.list(players, pager);
-    				}
-    			}
-    			return;
-    		}
-    	}
+			}
 	    }
 	}
 	

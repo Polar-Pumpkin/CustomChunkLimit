@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import pers.tany.customchunklimit.Other;
-import pers.tany.customchunklimit.Way;
+import pers.tany.customchunklimit.CommonlyWay;
 
 public class Gui {
 	public static void list(Player player,int type){
@@ -68,7 +68,7 @@ public class Gui {
         	int ID = Integer.parseInt(types.split(":")[0]);
         	int DataID = Integer.parseInt(types.split(":")[1]);
         	int limit = Other.data.getInt("Block."+types+".limit");
-        	ItemStack item = Way.GetItemStack(Other.data.getString("Block."+types+".item"));
+        	ItemStack item = CommonlyWay.GetItemStack(Other.data.getString("Block."+types+".item"));
         	ItemMeta itemdata = item.getItemMeta();
         	if(DataID!=999) {
         		lore.add("§a被限制的方块ID: §6"+ID+":"+DataID);
@@ -80,7 +80,7 @@ public class Gui {
         		}
         	}
         	else
-        		lore.add("§a被限制的方块ID:§6"+ID+"§a下的所有同主ID");
+        		lore.add("§a被限制的方块ID: §6"+ID+"§a下的所有同主ID");
         	lore.add("§a每设置区块被限制的数量:§e"+limit+"§a个方块");
         	if(player.isOp()) {
         		lore.add("");
