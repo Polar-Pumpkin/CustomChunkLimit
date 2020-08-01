@@ -2,6 +2,9 @@ package pers.tany.customchunklimit.listenevent;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,13 +20,12 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
-import com.comphenix.protocol.utility.StreamSerializer;
 
 import de.tr7zw.nbtapi.NBTTileEntity;
+import pers.tany.customchunklimit.CommonlyWay;
 import pers.tany.customchunklimit.Main;
 import pers.tany.customchunklimit.Other;
 import pers.tany.customchunklimit.gui.Gui;
@@ -37,79 +39,81 @@ public class Event implements Listener {
 		if(Main.Create.containsKey(evt.getPlayer().getName())) {
 			if(!(evt.getPlayer().getInventory().getItemInHand() == null || evt.getPlayer().getInventory().getItemInHand().getType() == Material.AIR)) {
 				evt.setCancelled(true);
-				String item = GetItemData(evt.getPlayer().getInventory().getItemInHand());
-				int limit = Main.Create.get(evt.getPlayer().getName());
-				String block = evt.getClickedBlock().getType().getId()+":"+evt.getClickedBlock().getData();
-				String a = "";
-				String b = "";
-				if(Other.data.getConfigurationSection("Block").getKeys(false).size()!=0) {
-					for(String blocks:Other.data.getConfigurationSection("Block").getKeys(false)) {
-						if(blocks.equals(block)) {
-							if(Other.config.getBoolean("Tile")) {
-								try {
-									String nbt = new NBTTileEntity(evt.getClickedBlock().getState()).toString().replace(".", "");
-									if(Other.data.getString("Block."+blocks+".tile")!=null) {
-							    		nbt = nbt.replace("id:\"minecraft:air\"", "");
-							    		nbt = nbt.split("id:\"")[1];
-							    		nbt = nbt.split("\"")[0];
-							    		if(Other.data.getString("Block."+blocks+".tile").equals(nbt)) {
-							    			if(Other.config.getBoolean("Botania")) {
-								    			if(nbt.contains("botania:")&&Other.data.getString("Block."+blocks+".botania")!=null) {
-								    				nbt = new NBTTileEntity(evt.getClickedBlock().getState()).toString().replace(".", "");
-								    				nbt = nbt.split("subTileName:\"")[1];
-								    				nbt = nbt.split("\"")[0];
-								    				if(!Other.data.getString("Block."+blocks+".botania").equals(nbt))
-									        			continue;
+				if(evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)||evt.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+					String item = CommonlyWay.GetItemData(evt.getPlayer().getInventory().getItemInHand());
+					int limit = Main.Create.get(evt.getPlayer().getName());
+					String block = evt.getClickedBlock().getType().getId()+":"+evt.getClickedBlock().getData();
+					String a = "";
+					String b = "";
+					if(Other.data.getConfigurationSection("Block").getKeys(false).size()!=0) {
+						for(String blocks:Other.data.getConfigurationSection("Block").getKeys(false)) {
+							if(blocks.equals(block)) {
+								if(Other.config.getBoolean("Tile")) {
+									try {
+										String nbt = new NBTTileEntity(evt.getClickedBlock().getState()).toString().replace(".", "");
+										if(Other.data.getString("Block."+blocks+".tile")!=null) {
+								    		nbt = nbt.replace("id:\"minecraft:air\"", "");
+								    		nbt = nbt.split("id:\"")[1];
+								    		nbt = nbt.split("\"")[0];
+								    		if(Other.data.getString("Block."+blocks+".tile").equals(nbt)) {
+								    			if(Other.config.getBoolean("Botania")) {
+									    			if(nbt.contains("botania:")&&Other.data.getString("Block."+blocks+".botania")!=null) {
+									    				nbt = new NBTTileEntity(evt.getClickedBlock().getState()).toString().replace(".", "");
+									    				nbt = nbt.split("subTileName:\"")[1];
+									    				nbt = nbt.split("\"")[0];
+									    				if(!Other.data.getString("Block."+blocks+".botania").equals(nbt))
+										        			continue;
+									    			}
 								    			}
-							    			}
-							    		} else {
-							    			continue;
-							    		}
-									}
-								} catch (Exception e) {
-									if(Other.data.getString("Block."+blocks+".tile")!=null) {
-										continue;
-									}
-					        	}
+								    		} else {
+								    			continue;
+								    		}
+										}
+									} catch (Exception e) {
+										if(Other.data.getString("Block."+blocks+".tile")!=null) {
+											continue;
+										}
+						        	}
+								}
+								evt.getPlayer().sendMessage("§c这个方块已经被限制过了");
+								evt.setCancelled(true);
+								return;
 							}
-							evt.getPlayer().sendMessage("§c这个方块已经被限制过了");
-							evt.setCancelled(true);
-							return;
 						}
 					}
-				}
-				if(Other.config.getBoolean("Tile")) {
+					if(Other.config.getBoolean("Tile")) {
+				  		try {
+				  			NBTTileEntity  tile = new NBTTileEntity(evt.getClickedBlock().getState());
+				    		String nbt = tile.toString().replace(".", "");
+				    		nbt = nbt.replace("id:\"minecraft:air\"", "");
+				    		nbt = nbt.split("id:\"")[1];
+				    		nbt = nbt.split("\"")[0];
+				    		String c = nbt;
+				    		a = ":"+nbt;
+							evt.getPlayer().sendMessage("§a检测到tile存在，已记录为：§e"+nbt);
+				    		if(nbt.contains("botania:")) {
+				    			nbt = tile.toString().replace(".", "");
+				    			nbt = nbt.split("subTileName:\"")[1];
+				    			nbt = nbt.split("\"")[0];
+				        		b = ":"+nbt;
+								evt.getPlayer().sendMessage("§a检测到为植魔产能花，已记录为：§6"+nbt);
+								Other.data.set("Block."+block+a+b+".botania", nbt);
+				    		}
+							Other.data.set("Block."+block+a+b+".tile", c);
+				  		} catch (Exception e) {
+			        		
+			        	}
+					}
+					Other.data.set("Block."+block+a+b+".item", item);
+					Other.data.set("Block."+block+a+b+".limit", limit);
 			  		try {
-			  			NBTTileEntity  tile = new NBTTileEntity(evt.getClickedBlock().getState());
-			    		String nbt = tile.toString().replace(".", "");
-			    		nbt = nbt.replace("id:\"minecraft:air\"", "");
-			    		nbt = nbt.split("id:\"")[1];
-			    		nbt = nbt.split("\"")[0];
-			    		String c = nbt;
-			    		a = ":"+nbt;
-						evt.getPlayer().sendMessage("§a检测到tile存在，已记录为：§e"+nbt);
-			    		if(nbt.contains("botania:")) {
-			    			nbt = tile.toString().replace(".", "");
-			    			nbt = nbt.split("subTileName:\"")[1];
-			    			nbt = nbt.split("\"")[0];
-			        		b = ":"+nbt;
-							evt.getPlayer().sendMessage("§a检测到为植魔产能花，已记录为：§6"+nbt);
-							Other.data.set("Block."+block+a+b+".botania", nbt);
-			    		}
-						Other.data.set("Block."+block+a+b+".tile", c);
-			  		} catch (Exception e) {
-		        		
+			  			Other.data.save(file);
+			  		} catch (IOException e) {
+			  			e.printStackTrace();
 		        	}
+			  		evt.getPlayer().sendMessage("§a添加方块成功！");
+			  		Main.Create.remove(evt.getPlayer().getName());
 				}
-				Other.data.set("Block."+block+a+b+".item", item);
-				Other.data.set("Block."+block+a+b+".limit", limit);
-		  		try {
-		  			Other.data.save(file);
-		  		} catch (IOException e) {
-		  			e.printStackTrace();
-	        	}
-		  		evt.getPlayer().sendMessage("§a添加方块成功！");
-		  		Main.Create.remove(evt.getPlayer().getName());
 			} else {
 				evt.getPlayer().sendMessage("§c手上不能为空！");
 			}
@@ -119,7 +123,7 @@ public class Event implements Listener {
 		if(Main.CreateAll.containsKey(evt.getPlayer().getName())) {
 			if(!(evt.getPlayer().getInventory().getItemInHand() == null || evt.getPlayer().getInventory().getItemInHand().getType() == Material.AIR)) {
 				if(evt.getAction().equals(Action.RIGHT_CLICK_BLOCK)||evt.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-					String item = GetItemData(evt.getPlayer().getInventory().getItemInHand());
+					String item = CommonlyWay.GetItemData(evt.getPlayer().getInventory().getItemInHand());
 					int limit = Main.CreateAll.get(evt.getPlayer().getName());
 					String block = evt.getClickedBlock().getType().getId()+":999";
 					if(Other.data.getConfigurationSection("Block").getKeys(false).size()>0) {
@@ -180,12 +184,10 @@ public class Event implements Listener {
 			}
 		}
 		Chunk chunk = evt.getBlock().getChunk();
-		Block block;
-		int limit=99999;
-		int number = 0;
 		if(!Other.config.getBoolean("Optimization")) {
 			Chunk[] chunklist = new Chunk[1];
 			if(!Other.config.getBoolean("NineChunk")) {
+				evt.isAsynchronous();
 				chunklist[0] = chunk;
 			} else if(Other.config.getBoolean("NineChunkImprove")) {
 				chunklist = new Chunk[25];
@@ -465,7 +467,16 @@ public class Event implements Listener {
 					}
 				}
 			}
-			for(Chunk chunks:chunklist) {
+			AtomicInteger number = new AtomicInteger(0);
+			int[] limit = new int[1];
+			limit[0] = 99999;
+			ConcurrentLinkedQueue<Block> blocklist = new ConcurrentLinkedQueue<Block>();
+			Stream<Chunk> stream = Stream.of(chunklist);
+			if (chunklist.length > 1) { 
+				stream = stream.parallel();
+			}
+			stream.forEach(chunks -> {
+				Block block;
 				for(int x=0;x<16;x++) {
 					for(int z=0;z<16;z++) {
 						for(int y=0;y<256;y++) {
@@ -477,12 +488,12 @@ public class Event implements Listener {
 								int data = Integer.parseInt(limitstring.split(":")[1]);
 								if(data==999) {
 									if(block.getTypeId()==id) {
-										if(number==0) {
-											limit = Other.data.getInt("Block."+limitstring+".limit");
+										if(number.get()==0) {
+											limit[0] = Other.data.getInt("Block."+limitstring+".limit");
 											for(PermissionAttachmentInfo p:evt.getPlayer().getEffectivePermissions()) {
 												if(p.getPermission().startsWith("ccl."+id+"."+data+".")) {
 													try {
-														limit = limit+Integer.parseInt(p.getPermission().split("\\.")[3]);
+														limit[0] = limit[0]+Integer.parseInt(p.getPermission().split("\\.")[3]);
 														break;
 														}	catch (NumberFormatException e)	{
 														continue;
@@ -494,9 +505,9 @@ public class Event implements Listener {
 										{
 											continue;
 										}
-										number++;
-										if(number>limit&&Other.data.getBoolean("Clear")) {
-											block.breakNaturally();
+										number.incrementAndGet();
+										if(number.get()>limit[0]&&Other.data.getBoolean("Clear")) {
+											blocklist.offer(block);
 										}
 									}
 								} else {
@@ -569,12 +580,12 @@ public class Event implements Listener {
 												}
 								        	}
 										}
-										if(number==0) {
-											limit = Other.data.getInt("Block."+limitstring+".limit");
+										if(number.get()==0) {
+											limit[0] = Other.data.getInt("Block."+limitstring+".limit");
 											for(PermissionAttachmentInfo p:evt.getPlayer().getEffectivePermissions()) {
 												if(p.getPermission().startsWith("ccl."+id+"."+data+".")) {
 													try {
-														limit = limit+Integer.parseInt(p.getPermission().split("\\.")[3]);
+														limit[0] = limit[0]+Integer.parseInt(p.getPermission().split("\\.")[3]);
 														break;
 														}	catch (NumberFormatException e)	{
 														continue;
@@ -586,9 +597,9 @@ public class Event implements Listener {
 										{
 											continue;
 										}
-										number++;
-										if(number>limit&&Other.data.getBoolean("Clear")) {
-											block.breakNaturally();
+										number.incrementAndGet();
+										if(number.get()>limit[0]&&Other.data.getBoolean("Clear")) {
+											blocklist.offer(block);
 										}
 									}
 								}
@@ -596,10 +607,15 @@ public class Event implements Listener {
 						}
 					}
 				}
-			}
-			if(number>=limit) {
+			});
+			if(number.get()>=limit[0]) {
 				evt.setCancelled(true);
-				evt.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', Other.message.getString("ExceedLimit").replace("[limit]", limit+"")));
+				evt.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', Other.message.getString("ExceedLimit").replace("[limit]", limit[0]+"")));
+				if(number.get()>limit[0]&&Other.data.getBoolean("Clear")) {
+					for(Block block:blocklist) {
+						block.breakNaturally();
+					}
+				}
 				return;
 			}
 		} else {
@@ -895,7 +911,16 @@ public class Event implements Listener {
 					}
 				}
 			}
-			for(Chunk chunks:chunklist) {
+			AtomicInteger number = new AtomicInteger(0);
+			int[] limit = new int[1];
+			limit[0] = 99999;
+			ConcurrentLinkedQueue<Block> blocklist = new ConcurrentLinkedQueue<Block>();
+			Stream<Chunk> stream = Stream.of(chunklist);
+			if (chunklist.length > 1) { 
+				stream = stream.parallel();
+			}
+			stream.forEach(chunks -> {
+				Block block;
 				for(int x=0;x<16;x++) {
 					for(int z=0;z<16;z++) {
 						for(int y=customy;y<=limity;y++) {
@@ -907,12 +932,12 @@ public class Event implements Listener {
 								int data = Integer.parseInt(limitstring.split(":")[1]);
 								if(data==999) {
 									if(block.getTypeId()==id) {
-										if(number==0) {
-											limit = Other.data.getInt("Block."+limitstring+".limit");
+										if(number.get()==0) {
+											limit[0] = Other.data.getInt("Block."+limitstring+".limit");
 											for(PermissionAttachmentInfo p:evt.getPlayer().getEffectivePermissions()) {
 												if(p.getPermission().startsWith("ccl."+id+"."+data+".")) {
 													try {
-														limit = limit+Integer.parseInt(p.getPermission().split("\\.")[3]);
+														limit[0] = limit[0]+Integer.parseInt(p.getPermission().split("\\.")[3]);
 														break;
 														}	catch (NumberFormatException e)	{
 														continue;
@@ -924,9 +949,9 @@ public class Event implements Listener {
 										{
 											continue;
 										}
-										number++;
-										if(number>limit&&Other.data.getBoolean("Clear")) {
-											block.breakNaturally();
+										number.incrementAndGet();
+										if(number.get()>limit[0]&&Other.data.getBoolean("Clear")) {
+											blocklist.offer(block);
 										}
 									}
 								} else {
@@ -998,12 +1023,12 @@ public class Event implements Listener {
 												}
 								        	}
 										}
-										if(number==0) {
-											limit = Other.data.getInt("Block."+limitstring+".limit");
+										if(number.get()==0) {
+											limit[0] = Other.data.getInt("Block."+limitstring+".limit");
 											for(PermissionAttachmentInfo p:evt.getPlayer().getEffectivePermissions()) {
 												if(p.getPermission().startsWith("ccl."+id+"."+data+".")) {
 													try {
-														limit = limit+Integer.parseInt(p.getPermission().split("\\.")[3]);
+														limit[0] = limit[0]+Integer.parseInt(p.getPermission().split("\\.")[3]);
 														break;
 														}	catch (NumberFormatException e)	{
 														continue;
@@ -1015,9 +1040,9 @@ public class Event implements Listener {
 										{
 											continue;
 										}
-										number++;
-										if(number>limit&&Other.data.getBoolean("Clear")) {
-											block.breakNaturally();
+										number.incrementAndGet();
+										if(number.get()>limit[0]&&Other.data.getBoolean("Clear")) {
+											blocklist.offer(block);
 										}
 									}
 								}
@@ -1025,10 +1050,15 @@ public class Event implements Listener {
 						}
 					}
 				}
-			}
-			if(number>=limit) {
+			});
+			if(number.get()>=limit[0]) {
 				evt.setCancelled(true);
-				evt.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', Other.message.getString("ExceedLimit").replace("[limit]", limit+"")));
+				evt.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', Other.message.getString("ExceedLimit").replace("[limit]", limit[0]+"")));
+				if(number.get()>limit[0]&&Other.data.getBoolean("Clear")) {
+					for(Block block:blocklist) {
+						block.breakNaturally();
+					}
+				}
 				return;
 			}
 		}
@@ -1133,28 +1163,5 @@ public class Event implements Listener {
 				}
 			}
 	    }
-	}
-	
-//	ItemStack转String
-	public String GetItemData(ItemStack item) {
-		String a;
-		int amount = item.getAmount();
-		item.setAmount(1);
-		try {
-		    a = new StreamSerializer().serializeItemStack(item);
-		} catch (Exception e) {
-		    a = null;
-		}
-		item.setAmount(amount);
-		return a;
-	}
-//	String转ItemStack
-	public ItemStack GetItemStack(String data) {
-		try {
-			return new StreamSerializer().deserializeItemStack(data);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 }

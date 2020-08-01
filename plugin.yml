@@ -1,6 +1,6 @@
 name: CustomChunkLimit
 main: pers.tany.customchunklimit.Main
-version: 1.5.1
+version: 1.5.2
 author: tany
 depend: [ProtocolLib,NBTAPI]
 commands:
