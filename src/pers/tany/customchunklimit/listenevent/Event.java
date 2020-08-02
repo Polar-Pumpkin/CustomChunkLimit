@@ -21,8 +21,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.plugin.Plugin;
-
 
 import de.tr7zw.nbtapi.NBTTileEntity;
 import pers.tany.customchunklimit.CommonlyWay;
@@ -31,8 +29,7 @@ import pers.tany.customchunklimit.Other;
 import pers.tany.customchunklimit.gui.Gui;
 
 public class Event implements Listener {
-    Plugin config = Bukkit.getPluginManager().getPlugin("CustomChunkLimit");
-    File file=new File(config.getDataFolder(),"data.yml");
+    File file=new File(Main.plugin.getDataFolder(),"data.yml");
     
     @EventHandler
     public void Interact(PlayerInteractEvent evt) {
@@ -187,285 +184,149 @@ public class Event implements Listener {
 		if(!Other.config.getBoolean("Optimization")) {
 			Chunk[] chunklist = new Chunk[1];
 			if(!Other.config.getBoolean("NineChunk")) {
-				evt.isAsynchronous();
 				chunklist[0] = chunk;
 			} else if(Other.config.getBoolean("NineChunkImprove")) {
 				chunklist = new Chunk[25];
-				for(int i=0;i<25;i++) {
-					if(i==0) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-17);
-						location.setZ(chunk.getZ()*16-17);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==1) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-17);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==2) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-17);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==3) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-17);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==4) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-17);
-						location.setZ(chunk.getZ()*16+32);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==5) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16-17);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==6) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==7) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==8) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==9) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16+32);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==10) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16-17);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==11) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==12) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==13) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==14) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16+32);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==15) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16-17);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==16) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==17) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==18) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==19) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16+32);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==20) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+32);
-						location.setZ(chunk.getZ()*16-17);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==21) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+32);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==22) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+32);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==23) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+32);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==24) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+32);
-						location.setZ(chunk.getZ()*16+32);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-				}
+				Location location = evt.getBlock().getLocation();
 				
+				location.setX(chunk.getX()*16-17);
+				location.setZ(chunk.getZ()*16-17);
+				chunklist[0] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-17);
+				location.setZ(chunk.getZ()*16-1);		
+				chunklist[1] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-17);
+				location.setZ(chunk.getZ()*16);	
+				chunklist[2] = location.getChunk();
+					
+				location.setX(chunk.getX()*16-17);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[3] = location.getChunk();
+					
+				location.setX(chunk.getX()*16-17);
+				location.setZ(chunk.getZ()*16+32);
+				chunklist[4] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16-17);
+				chunklist[5] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[6] = location.getChunk();
+						
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16);
+				chunklist[7] = location.getChunk();
+						
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[8] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16+32);
+				chunklist[9] = location.getChunk();
+				
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16-17);
+				chunklist[10] = location.getChunk();
+						
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[11] = location.getChunk();
+						
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16);
+				chunklist[12] = location.getChunk();
+						
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[13] = location.getChunk();
+						
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16+32);
+				chunklist[14] = location.getChunk();
+				
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16-17);
+				chunklist[15] = location.getChunk();
+						
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[16] = location.getChunk();
+						
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16);
+				chunklist[17] = location.getChunk();
+				
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[18] = location.getChunk();
+						
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16+32);
+				chunklist[19] = location.getChunk();
+						
+				
+				location.setX(chunk.getX()*16+32);
+				location.setZ(chunk.getZ()*16-17);
+				chunklist[20] = location.getChunk();
+						
+				location.setX(chunk.getX()*16+32);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[21] = location.getChunk();
+						
+				location.setX(chunk.getX()*16+32);
+				location.setZ(chunk.getZ()*16);
+				chunklist[22] = location.getChunk();
+						
+				
+				location.setX(chunk.getX()*16+32);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[23] = location.getChunk();
+						
+				location.setX(chunk.getX()*16+32);
+				location.setZ(chunk.getZ()*16+32);
+				chunklist[24] = location.getChunk();
 			} else {
 				chunklist = new Chunk[9];
-				for(int i=0;i<9;i++) {
-					if(i==0) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==1) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==2) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==3) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==4) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==5) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==6) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==7) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==8) {
-						chunklist[i] = evt.getBlock().getChunk();
-						continue;
-					}
-				}
+				Location location = evt.getBlock().getLocation();
+				
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[0] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[1] = location.getChunk();
+				
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[2] = location.getChunk();
+				
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16+16);			
+				chunklist[3] = location.getChunk();
+				
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16);
+				chunklist[4] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16);
+				chunklist[5] = location.getChunk();
+				
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[6] = location.getChunk();
+				
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[7] = location.getChunk();
+				
+				chunklist[8] = evt.getBlock().getChunk();
 			}
 			AtomicInteger number = new AtomicInteger(0);
 			int[] limit = new int[1];
@@ -636,280 +497,146 @@ public class Event implements Listener {
 				chunklist[0] = chunk;
 			} else if(Other.config.getBoolean("NineChunkImprove")) {
 				chunklist = new Chunk[25];
-				for(int i=0;i<25;i++) {
-					if(i==0) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-17);
-						location.setZ(chunk.getZ()*16-17);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==1) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-17);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==2) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-17);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==3) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-17);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==4) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-17);
-						location.setZ(chunk.getZ()*16+32);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==5) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16-17);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==6) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==7) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==8) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==9) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16+32);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==10) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16-17);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==11) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==12) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==13) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==14) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16+32);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==15) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16-17);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==16) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==17) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==18) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==19) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16+32);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==20) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+32);
-						location.setZ(chunk.getZ()*16-17);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==21) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+32);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==22) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+32);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==23) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+32);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==24) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+32);
-						location.setZ(chunk.getZ()*16+32);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-				}
+				Location location = evt.getBlock().getLocation();
+				
+				location.setX(chunk.getX()*16-17);
+				location.setZ(chunk.getZ()*16-17);
+				chunklist[0] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-17);
+				location.setZ(chunk.getZ()*16-1);		
+				chunklist[1] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-17);
+				location.setZ(chunk.getZ()*16);	
+				chunklist[2] = location.getChunk();
+					
+				location.setX(chunk.getX()*16-17);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[3] = location.getChunk();
+					
+				location.setX(chunk.getX()*16-17);
+				location.setZ(chunk.getZ()*16+32);
+				chunklist[4] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16-17);
+				chunklist[5] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[6] = location.getChunk();
+						
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16);
+				chunklist[7] = location.getChunk();
+						
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[8] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16+32);
+				chunklist[9] = location.getChunk();
+				
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16-17);
+				chunklist[10] = location.getChunk();
+						
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[11] = location.getChunk();
+						
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16);
+				chunklist[12] = location.getChunk();
+						
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[13] = location.getChunk();
+						
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16+32);
+				chunklist[14] = location.getChunk();
+				
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16-17);
+				chunklist[15] = location.getChunk();
+						
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[16] = location.getChunk();
+						
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16);
+				chunklist[17] = location.getChunk();
+				
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[18] = location.getChunk();
+						
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16+32);
+				chunklist[19] = location.getChunk();
+						
+				
+				location.setX(chunk.getX()*16+32);
+				location.setZ(chunk.getZ()*16-17);
+				chunklist[20] = location.getChunk();
+						
+				location.setX(chunk.getX()*16+32);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[21] = location.getChunk();
+						
+				location.setX(chunk.getX()*16+32);
+				location.setZ(chunk.getZ()*16);
+				chunklist[22] = location.getChunk();
+						
+				
+				location.setX(chunk.getX()*16+32);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[23] = location.getChunk();
+						
+				location.setX(chunk.getX()*16+32);
+				location.setZ(chunk.getZ()*16+32);
+				chunklist[24] = location.getChunk();
 			} else {
 				chunklist = new Chunk[9];
-				for(int i=0;i<9;i++) {
-					if(i==0) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==1) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==2) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==3) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==4) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16+16);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==5) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16-1);
-						location.setZ(chunk.getZ()*16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==6) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16+16);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==7) {
-						Location location = evt.getBlock().getLocation();
-						location.setX(chunk.getX()*16);
-						location.setZ(chunk.getZ()*16-1);
-						location.setY(0);
-						chunklist[i] = location.getChunk();
-						continue;
-					}
-					if(i==8) {
-						chunklist[i] = evt.getBlock().getChunk();
-						continue;
-					}
-				}
+				Location location = evt.getBlock().getLocation();
+				
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[0] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[1] = location.getChunk();
+				
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[2] = location.getChunk();
+				
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16+16);			
+				chunklist[3] = location.getChunk();
+				
+				location.setX(chunk.getX()*16+16);
+				location.setZ(chunk.getZ()*16);
+				chunklist[4] = location.getChunk();
+				
+				location.setX(chunk.getX()*16-1);
+				location.setZ(chunk.getZ()*16);
+				chunklist[5] = location.getChunk();
+				
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16+16);
+				chunklist[6] = location.getChunk();
+				
+				location.setX(chunk.getX()*16);
+				location.setZ(chunk.getZ()*16-1);
+				chunklist[7] = location.getChunk();
+				
+				chunklist[8] = evt.getBlock().getChunk();
 			}
 			AtomicInteger number = new AtomicInteger(0);
 			int[] limit = new int[1];

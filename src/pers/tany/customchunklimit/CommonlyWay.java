@@ -3,7 +3,6 @@ package pers.tany.customchunklimit;
 import java.util.ArrayList;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -15,8 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import com.comphenix.protocol.utility.StreamSerializer;
 
 public class CommonlyWay {
-	
-		static boolean again = true;
 //		命令判断是否为OP，不是则true
 		public static boolean OpUseCommand(CommandSender player) {
 			if(player.isOp()) {
@@ -175,7 +172,7 @@ public class CommonlyWay {
 //						e.printStackTrace();
 //						return "null";
 //					}
-//				}	
+//				}
 				
 //				遍历数组，替换数组字符串
 				public static java.util.List<String> ListReplace(java.util.List<String> list,String WasReplaced,String replace){

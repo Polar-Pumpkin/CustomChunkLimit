@@ -3,13 +3,11 @@ package pers.tany.customchunklimit.command;
 import java.io.File;
 import java.io.IOException;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import pers.tany.customchunklimit.Main;
 import pers.tany.customchunklimit.Other;
@@ -17,10 +15,9 @@ import pers.tany.customchunklimit.gui.Gui;
 
 
 public class Commands implements CommandExecutor {
-    Plugin config = Bukkit.getPluginManager().getPlugin("CustomChunkLimit");
-    File file=new File(config.getDataFolder(),"config.yml");
-    File file1=new File(config.getDataFolder(),"data.yml");
-    File file2=new File(config.getDataFolder(),"message.yml");
+    File file=new File(Main.plugin.getDataFolder(),"config.yml");
+    File file1=new File(Main.plugin.getDataFolder(),"data.yml");
+    File file2=new File(Main.plugin.getDataFolder(),"message.yml");
     
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
