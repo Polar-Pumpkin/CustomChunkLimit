@@ -1,0 +1,9 @@
+Plugin:
+  Prefix: "&e[&6Custom&eChunk&6Limit&e]&r "
+  INFO: "&a>&r "
+  WARN: "&e>&r "
+  ERROR: "&c>&r "
+Gui:
+  NoList: '&c第[type]页没有内容，无法打开！'
+Limit:
+  Exceed: '&c这个方块最多在这些区块内放[limit]个'
