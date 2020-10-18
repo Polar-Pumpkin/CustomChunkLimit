@@ -167,11 +167,11 @@ public class Event implements Listener {
 			int id = Integer.parseInt(limitstring.split(":")[0]);
 			int data = Integer.parseInt(limitstring.split(":")[1]);
 			if(data==999) {
-				if(evt.getBlock().getTypeId()==id) {
+				if(evt.getBlock().getType().getId()==id) {
 					break;
 				}
 			} else {
-				if(evt.getBlock().getTypeId()==id&&evt.getBlock().getData()==data) {
+				if(evt.getBlock().getType().getId()==id&&evt.getBlock().getData()==data) {
 					break;
 				}
 			}
@@ -348,7 +348,7 @@ public class Event implements Listener {
 								int id = Integer.parseInt(limitstring.split(":")[0]);
 								int data = Integer.parseInt(limitstring.split(":")[1]);
 								if(data==999) {
-									if(block.getTypeId()==id) {
+									if(block.getType().getId()==id) {
 										if(number.get()==0) {
 											limit[0] = Other.data.getInt("Block."+limitstring+".limit");
 											for(PermissionAttachmentInfo p:evt.getPlayer().getEffectivePermissions()) {
@@ -412,7 +412,7 @@ public class Event implements Listener {
 											}
 										}
 									}
-									if(block.getTypeId()==id&&block.getData()==data) {
+									if(block.getType().getId()==id&&block.getData()==data) {
 										if(Other.config.getBoolean("Tile")) {
 											try {
 												String nbt = new NBTTileEntity(block.getState()).toString().replace(".", "");
@@ -658,7 +658,7 @@ public class Event implements Listener {
 								int id = Integer.parseInt(limitstring.split(":")[0]);
 								int data = Integer.parseInt(limitstring.split(":")[1]);
 								if(data==999) {
-									if(block.getTypeId()==id) {
+									if(block.getType().getId()==id) {
 										if(number.get()==0) {
 											limit[0] = Other.data.getInt("Block."+limitstring+".limit");
 											for(PermissionAttachmentInfo p:evt.getPlayer().getEffectivePermissions()) {
@@ -722,7 +722,7 @@ public class Event implements Listener {
 											}
 										}
 									}
-									if(block.getTypeId()==id&&block.getData()==data) {
+									if(block.getType().getId()==id&&block.getData()==data) {
 										if(Other.config.getBoolean("Tile")) {
 											try {
 												String nbt = new NBTTileEntity(block.getState()).toString().replace(".", "");
@@ -794,47 +794,38 @@ public class Event implements Listener {
 		
 	}
 	@EventHandler
-	public void Click(InventoryClickEvent evt) 
-	{
+	public void Click(InventoryClickEvent evt) {
 		Inventory inventory = evt.getClickedInventory();
 		if(inventory == null) {
 			return;
 		}
 		Player player = (Player) evt.getWhoClicked();
-		if(evt.getClickedInventory()==null) 
-		{
+		if(evt.getClickedInventory()==null) {
 			return;
 		}
 		try {
-		    if(evt.getClickedInventory().getTitle().startsWith("§a已被§c限制§a物品列表第")) 
-		    {
+		    if(evt.getView().getTitle().startsWith("§a已被§c限制§a物品列表第")) {
 		    	evt.setCancelled(true);
-		    }
-		    else 
-		    {
+		    } else {
 		    	return;
 		    }
 		} catch(NullPointerException a) {
 			return;
 		}
-	    if(evt.getCurrentItem().getType().equals(Material.AIR)) 
-	    {
+	    if(evt.getCurrentItem().getType().equals(Material.AIR)) {
 	    	return;
 	    }
-	    if(evt.getCurrentItem().getItemMeta().hasDisplayName()&&evt.getCurrentItem().getItemMeta().getDisplayName().equals("§a上")) 
-	    {
+	    if(evt.getCurrentItem().getItemMeta().hasDisplayName()&&evt.getCurrentItem().getItemMeta().getDisplayName().equals("§a上")) {
 	    	int pager = Integer.parseInt(player.getOpenInventory().getTitle().replace("§a已被§c限制§a物品列表第", "").replace("页", ""));
 	    	Gui.list(player, pager--);
 	    	return;
 	    }
-	    if(evt.getCurrentItem().getItemMeta().hasDisplayName()&&evt.getCurrentItem().getItemMeta().getDisplayName().equals("§a下")) 
-	    {
+	    if(evt.getCurrentItem().getItemMeta().hasDisplayName()&&evt.getCurrentItem().getItemMeta().getDisplayName().equals("§a下")) {
 	    	int pager = Integer.parseInt(player.getOpenInventory().getTitle().replace("§a已被§c限制§a物品列表第", "").replace("页", ""));
 	    	Gui.list(player, pager++);
 	    	return;
 	    }
-	    if(evt.getRawSlot()>44) 
-	    {
+	    if(evt.getRawSlot()>44) {
 	    	return;
 	    }
 	    if(player.isOp()) {

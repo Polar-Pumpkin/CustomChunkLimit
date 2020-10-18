@@ -15,9 +15,6 @@ import pers.tany.customchunklimit.gui.Gui;
 
 
 public class Commands implements CommandExecutor {
-    File file=new File(Main.plugin.getDataFolder(),"config.yml");
-    File file1=new File(Main.plugin.getDataFolder(),"data.yml");
-    File file2=new File(Main.plugin.getDataFolder(),"message.yml");
     
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -39,6 +36,9 @@ public class Commands implements CommandExecutor {
 					sender.sendMessage("§c你没有权限使用此指令");
 					return true;
 				}
+			    File file=new File(Main.plugin.getDataFolder(),"config.yml");
+			    File file1=new File(Main.plugin.getDataFolder(),"data.yml");
+			    File file2=new File(Main.plugin.getDataFolder(),"message.yml");
 				Other.config = YamlConfiguration.loadConfiguration(file);
 				Other.data = YamlConfiguration.loadConfiguration(file1);
 				Other.message = YamlConfiguration.loadConfiguration(file2);
@@ -52,6 +52,7 @@ public class Commands implements CommandExecutor {
 				}
 				if(Other.data.getBoolean("Clear")){
 					Other.data.set("Clear", false);
+				    File file1=new File(Main.plugin.getDataFolder(),"data.yml");
 					try {
 						Other.data.save(file1);
 					} catch (IOException e) {
@@ -62,6 +63,7 @@ public class Commands implements CommandExecutor {
 					return true;
 				} else {
 					Other.data.set("Clear", true);
+				    File file1=new File(Main.plugin.getDataFolder(),"data.yml");
 					try {
 						Other.data.save(file1);
 					} catch (IOException e) {
@@ -134,7 +136,7 @@ public class Commands implements CommandExecutor {
 			}
 			return true;
 		}
-		sender.sendMessage("§e[]-------------§e[§6Custom§eChunk§6Limit§e]§6---------------[]");
+		sender.sendMessage("§e[]------------§e[§6Custom§eChunk§6Limit§e]§6--------------[]");
 		sender.sendMessage("§e/ccl add 数量  §a添加手上的物品和下次点击的方块到限制");
 		sender.sendMessage("§e/ccl addall 数量  §a添加手上的物品和下次点击的方块包括所有子ID到限制");
 		sender.sendMessage("§e/ccl list  §a查看已限制摆放数量的方块");

@@ -18,7 +18,7 @@ public class Main extends JavaPlugin{
 	public void onEnable() {
 		Bukkit.getConsoleSender().sendMessage("°Ïe[°Ï6Custom°ÏeChunk°Ï6Limit°Ïe]°Ïa≤Âº˛“—º”‘ÿ");
 	    if (!new File(getDataFolder(), "config.yml").exists()) 
-	    	saveDefaultConfig();
+	    	saveResource("config.yml",false);
 	    
 	    if (!new File(getDataFolder(), "data.yml").exists())
 	    	saveResource("data.yml",false);

@@ -1,2 +1,2 @@
 # CustomChunkLimit
-自定义区块限制方块
+自定义区块限制方块插件
