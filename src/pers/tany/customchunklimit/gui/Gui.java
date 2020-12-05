@@ -1,102 +1,98 @@
 package pers.tany.customchunklimit.gui;
 
-import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import pers.tany.customchunklimit.Other;
 import pers.tany.customchunklimit.BasicLibrary;
 import pers.tany.customchunklimit.CommonlyWay;
+import pers.tany.customchunklimit.Other;
+
+import java.util.ArrayList;
 
 public class Gui {
-	public static void list(Player player,int type){
-		Inventory gui = Bukkit.createInventory(null, 54, "¡ìaÒÑ±»¡ìcÏŞÖÆ¡ìaÎïÆ·ÁĞ±íµÚ"+type+"Ò³");
-		
-		ItemStack info = BasicLibrary.stainedglass.get(1);
-		ItemStack last = BasicLibrary.stainedglass.get(11);
-		ItemStack next = BasicLibrary.stainedglass.get(14);
+    public static void list(Player player, int type) {
+        Inventory gui = Bukkit.createInventory(null, 54, "Â§aå·²è¢«Â§cé™åˆ¶Â§aç‰©å“åˆ—è¡¨ç¬¬" + type + "é¡µ");
 
-		
-		ItemMeta meta = info.getItemMeta();
+        ItemStack info = BasicLibrary.stainedglass.get(1);
+        ItemStack last = BasicLibrary.stainedglass.get(11);
+        ItemStack next = BasicLibrary.stainedglass.get(14);
+
+        ItemMeta meta = info.getItemMeta();
         ArrayList<String> lore = new ArrayList<String>();
-        ArrayList<String> Block = new ArrayList<String>();
-        for(String a:Other.data.getConfigurationSection("Block").getKeys(false)) {
-        	Block.add(a);
+        ArrayList<String> Block = new ArrayList<String>(Other.data.getConfigurationSection("Block").getKeys(false));
+
+        if (Other.data.getConfigurationSection("Block").getKeys(false).size() < (type - 1) * 45 + 1) {
+            if (type > 1) {
+                player.closeInventory();
+                Gui.list(player, --type);
+            } else {
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', Other.message.getString("NoList").replace("[type]", type + "")));
+            }
+            return;
         }
-        
-        if(Other.data.getConfigurationSection("Block").getKeys(false).size()<(type-1)*45+1) {
-        	if(type>1) {
-        		player.closeInventory();
-        		Gui.list(player, --type);
-        		return;
-        	} else {
-        	player.sendMessage(ChatColor.translateAlternateColorCodes('&', Other.message.getString("NoList").replace("[type]", type+"")));
-        	return;
-        	}
+        meta.setDisplayName("Â§aè¿™é‡Œå±•ç¤ºäº†è¢«é™åˆ¶çš„æ–¹å—ä¿¡æ¯");
+        lore.add("Â§2å¯ä»¥æŸ¥çœ‹ç›¸å…³æ•°å€¼");
+        if (player.isOp()) {
+            lore.add("Â§eç‚¹å‡»ç§»é™¤å¯¹åº”é™åˆ¶");
         }
-        
-        meta.setDisplayName("¡ìaÕâÀïÕ¹Ê¾ÁË±»ÏŞÖÆµÄ·½¿éĞÅÏ¢");
-        lore.add("¡ì2¿ÉÒÔ²é¿´Ïà¹ØÊıÖµ");
-        if(player.isOp())
-        	lore.add("¡ìeµã»÷ÒÆ³ı¶ÔÓ¦ÏŞÖÆ");
         meta.setLore(lore);
         info.setItemMeta(meta);
         lore.clear();
-        
-        meta.setDisplayName("¡ìaÏÂ");
-        lore.add("¡ìc²é¿´ÏÂÒ»Ò³");
+
+        meta.setDisplayName("Â§aä¸‹");
+        lore.add("Â§cæŸ¥çœ‹ä¸‹ä¸€é¡µ");
         meta.setLore(lore);
         next.setItemMeta(meta);
         lore.clear();
-        
-        meta.setDisplayName("¡ìaÉÏ");
-        lore.add("¡ìc·µ»ØÏÂÒ»Ò³");
+
+        meta.setDisplayName("Â§aä¸Š");
+        lore.add("Â§cè¿”å›ä¸‹ä¸€é¡µ");
         meta.setLore(lore);
         last.setItemMeta(meta);
         lore.clear();
-        
-        int i=(type-1)*45;
-        int a=0;
-        int size = Block.size()-1;
-        while(i<=size&&i<=44+(type-1)*45) {
-        	String types = Block.get(i);
-        	int ID = Integer.parseInt(types.split(":")[0]);
-        	int DataID = Integer.parseInt(types.split(":")[1]);
-        	int limit = Other.data.getInt("Block."+types+".limit");
-        	ItemStack item = CommonlyWay.GetItemStack(Other.data.getString("Block."+types+".item"));
-        	ItemMeta itemdata = item.getItemMeta();
-        	if(DataID!=999) {
-        		lore.add("¡ìa±»ÏŞÖÆµÄ·½¿éID: ¡ì6"+ID+":"+DataID);
-        		if(Other.data.getString("Block."+types+".tile")!=null) {
-        			lore.add("¡ìa±»½ûÓÃ·½¿éµÄtile¡ì2: ¡ì6"+Other.data.getString("Block."+types+".tile"));
-        			if(Other.data.getString("Block."+types+".botania")!=null) {
-        				lore.add("¡ìa±»½ûÓÃµÄ²úÄÜ»¨Îª¡ì2£º¡ì6"+Other.data.getString("Block."+types+".botania"));
-        			}
-        		}
-        	}
-        	else
-        		lore.add("¡ìa±»ÏŞÖÆµÄ·½¿éID: ¡ì6"+ID+"¡ìaÏÂµÄËùÓĞÍ¬Ö÷ID");
-        	lore.add("¡ìaÃ¿ÉèÖÃÇø¿é±»ÏŞÖÆµÄÊıÁ¿:¡ìe"+limit+"¡ìa¸ö·½¿é");
-        	if(player.isOp()) {
-        		lore.add("");
-        		lore.add("¡ìeµã»÷ÒÆ³ı´ËÏŞÖÆ");
-        	}
-        	itemdata.setLore(lore);
-        	lore.clear();
-        	item.setItemMeta(itemdata);
-        	gui.setItem(a, item);
-        	a++;
-        	i++;
+
+        int i = (type - 1) * 45;
+        int a = 0;
+        int size = Block.size() - 1;
+        while (i <= size && i <= 44 + (type - 1) * 45) {
+            String types = Block.get(i);
+            int ID = Integer.parseInt(types.split(":")[0]);
+            int DataID = Integer.parseInt(types.split(":")[1]);
+            int limit = Other.data.getInt("Block." + types + ".limit");
+            ItemStack item = CommonlyWay.getItemStack(Other.data.getString("Block." + types + ".item"));
+            ItemMeta itemdata = item.getItemMeta();
+            if (DataID != 999) {
+                lore.add("Â§aè¢«é™åˆ¶çš„æ–¹å—IDÂ§2: Â§6" + ID + ":" + DataID);
+                if (Other.data.getString("Block." + types + ".tile") != null) {
+                    lore.add("Â§aè¢«ç¦ç”¨æ–¹å—çš„tileÂ§2: Â§6" + Other.data.getString("Block." + types + ".tile"));
+                    if (Other.data.getString("Block." + types + ".botania") != null) {
+                        lore.add("Â§aè¢«ç¦ç”¨çš„äº§èƒ½èŠ±Â§2: Â§6" + Other.data.getString("Block." + types + ".botania"));
+                    }
+                }
+            } else {
+                lore.add("Â§aè¢«é™åˆ¶çš„æ–¹å—IDÂ§2: Â§6" + ID + "Â§aä¸‹çš„æ‰€æœ‰åŒä¸»ID");
+            }
+            lore.add("Â§aæ¯è®¾ç½®åŒºå—è¢«é™åˆ¶çš„æ•°é‡Â§e" + limit + "Â§aä¸ªæ–¹å—");
+            if (player.isOp()) {
+                lore.add("");
+                lore.add("Â§eç‚¹å‡»ç§»é™¤æ­¤é™åˆ¶");
+            }
+            itemdata.setLore(lore);
+            lore.clear();
+            item.setItemMeta(itemdata);
+            gui.setItem(a, item);
+            a++;
+            i++;
         }
-        
-        if(type>1)
-        gui.setItem(45, last);
-        else
-        gui.setItem(45, info);
+
+        if (type > 1) {
+            gui.setItem(45, last);
+        } else {
+            gui.setItem(45, info);
+        }
         gui.setItem(46, info);
         gui.setItem(47, info);
         gui.setItem(48, info);
@@ -104,11 +100,12 @@ public class Gui {
         gui.setItem(50, info);
         gui.setItem(51, info);
         gui.setItem(52, info);
-        if (Other.data.getConfigurationSection("Block").getKeys(false).size() < 46+(type-1)*45)
-        gui.setItem(53, info);
-        else
-        gui.setItem(53, next);
-        
+        if (Other.data.getConfigurationSection("Block").getKeys(false).size() < 46 + (type - 1) * 45) {
+            gui.setItem(53, info);
+        } else {
+            gui.setItem(53, next);
+        }
+
         player.openInventory(gui);
-	}
+    }
 }

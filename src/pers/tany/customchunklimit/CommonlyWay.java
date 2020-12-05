@@ -1,224 +1,633 @@
 package pers.tany.customchunklimit;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
-
-import org.bukkit.Material;
+import com.comphenix.protocol.utility.StreamSerializer;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import com.comphenix.protocol.utility.StreamSerializer;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+
 
 public class CommonlyWay {
-//		ÃüÁîÅĞ¶ÏÊÇ·ñÎªOP£¬²»ÊÇÔòtrue
-		public static boolean OpUseCommand(CommandSender player) {
-			if(player.isOp()) {
-				return false;
-			} else {
-				return true;
-			}
-			
-		}
-		
-//		ÅĞ¶ÏÍæ¼ÒÊÇ·ñÎªOP£¬²»ÊÇÔòtrue
-		public static boolean OpUse(Player player) {
-			if(player.isOp())
-			return false;
-			else
-			return true;
-		}
-		
-//		ÃüÁîÅĞ¶ÏÊÇ·ñÎª¿ØÖÆÌ¨£¬²»ÊÇÔòtrue
-		public static boolean ConsoleUse(CommandSender sender) {
-			if(sender instanceof Player){
-				return false;
-			} else {
-				return true;
-			}
-		}
-		
-//		ĞòÁĞ»¯ItemStack
-		public static String GetItemData(ItemStack item) {
-			String a;
-			int amount = item.getAmount();
-			item.setAmount(1);
-			try {
-			    a = new StreamSerializer().serializeItemStack(item);
-			} catch (Exception e) {
-			    a = null;
-			}
-			item.setAmount(amount);
-			return a;
-		}
-		
-//		·´ĞòÁĞ»¯ItemStack
-		public static ItemStack GetItemStack(String data) {
-			try {
-				return new StreamSerializer().deserializeItemStack(data);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
-//		Éú³É³¤¶È¹Ì¶¨µÄËæ»ú×Ö·û´®
-	    public static String CreateRandomString(int length)
-	    {
-	        String number = "";
-	        Random random = new Random();
-	        for (int i=0;i<length; i++)
-	        {
-	            String str = random.nextInt(2) % 2 == 0 ? "num" : "char";
-	            if ( "char".equalsIgnoreCase(str))
-	            {
-	                int nextInt = random.nextInt(2) % 2 == 0 ? 65 : 97;
-	                number += (char) (nextInt+random.nextInt(26));
-	            }
-	            else if ( "num".equalsIgnoreCase(str))
-	            {
-	            	number += String.valueOf(random.nextInt(10) );
-	            }
-	        }
-	        return number;
-	    }
-		
-//		»ñÈ¡Íæ¼Ò±³°ü¿Õ¸ñÊı
-		public static int BackpackEmptyNumber(Player player) {
-			int number=0;
-			int empty=0;
-			while(number<=35) {
-				if(player.getInventory().getItem(number)==null) {
-					empty++;
-				}
-				number++;
-			}
-			return empty;
-		}
-		
-//		Ôö¼Ó/¿Û³ıÍæ¼ÒµÄ¾­Ñé£¨Ö§³Ö¸ºÊı½µ¼¶£©
-		public static  void GiveExp(Player player, int xp) {
-			int level = player.getLevel();
-			int toNextLevel = GetUpgradeExp(level);
-			int floatExp = (int) (player.getExp() * toNextLevel) + xp;
-          	while(floatExp >= toNextLevel) {
-        	  	floatExp -= toNextLevel;
-        	  	toNextLevel = GetUpgradeExp(++level);
-          	}
-          	while(floatExp < 0) {
-          		floatExp += (toNextLevel = GetUpgradeExp(--level));
-                  	if(level < 0) 
-                  		level = floatExp = 0;
-          	}
-          	player.setLevel(level);
-          	player.setExp( (float) floatExp / toNextLevel);
-          	player.setTotalExperience(GetTotalExp(level) + floatExp);
-	  	}
-  
-	  	public static int GetUpgradeExp(int level) {
-	  		return level < 16  ? level * 2 + 7 : level < 30 ? level * 5 - 38 : level * 9 - 158;
-  		}
-  
-  		public static int GetTotalExp(int level) {
-  			return (int) (level < 17 ? level * (level + 6) : level < 31 ? level * (level * 2.5 - 40.5) + 360 : level * (level * 4.5 - 162.5) + 2220);
-  		}
-  		
-//		¸øÓèÍæ¼ÒÎïÆ·£¬Èç¹û±³°üÂúÔòÔÚÔ­µØÉú³ÉµôÂäÎï
-		public static void GiveItem(Player player,ItemStack item) {
-            HashMap<Integer,ItemStack> itemlist = new HashMap<Integer,ItemStack>(player.getInventory().addItem(item));
-            for(ItemStack i:itemlist.values()) {
-                player.getWorld().dropItemNaturally(player.getLocation(), i);
-            }
-		}
-		
-//		ÅĞ¶ÏÍæ¼ÒÊÇ·ñÎª¿ÕÊÖ£¬¿ÕÊÖÔòtrue
-		public static Boolean EmptyItem(Player player) {
-			if(player.getInventory().getItemInHand()==null||player.getInventory().getItemInHand().getType() == Material.AIR) {
-				return true;
-			}
-			return false;
-		}
+    //		å‘½ä»¤åˆ¤æ–­æ˜¯å¦ä¸ºOPï¼Œä¸æ˜¯åˆ™true
+    public static boolean opUseCommand(CommandSender player) {
+        return !player.isOp();
+    }
 
-		
-//				·µ»ØÕâ¸öÎïÆ·µÄNBT
-//				Ğè·´Éä
-//				public static Class<?> nbttagcompound;
-//				public static Class<?> itemstack;
-//				public static Method asNMSCopy;
-//				public static Method save;
-//				public static Class<?> saveitem;
-//				public String version = org.bukkit.Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-//				
-//				void Reflection() throws NoSuchMethodException, SecurityException, ClassNotFoundException {
-//					saveitem = Class.forName("net.minecraft.server."+version+".ItemStack");
-//					itemstack = Class.forName("org.bukkit.craftbukkit."+version+".inventory.CraftItemStack");
-//					nbttagcompound = Class.forName("net.minecraft.server."+version+".NBTTagCompound");
-//					asNMSCopy = itemstack.getMethod("asNMSCopy", ItemStack.class);
-//					save = saveitem.getMethod("save", nbttagcompound);
-//				}
-//				public static String GetItemNBT(ItemStack item) {
-//					String message;
-//					try {
-//						Object tag = Main.nbttagcompound.newInstance();
-//						Object nmsitem = Main.asNMSCopy.invoke(null, item);
-//						Object save = Main.save.invoke(nmsitem, tag);
-//						message = save.toString();
-//						return message;
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//						return "null";
-//					}
-//				}
-				
-//				±éÀúÊı×é£¬Ìæ»»Êı×é×Ö·û´®
-				public static java.util.List<String> ListReplace(java.util.List<String> list,String WasReplaced,String replace){
-					ArrayList<String> news = new ArrayList<>();
-					for(String s:list) {
-						news.add(s.replace(WasReplaced, replace));
-					}
-					return news;
-				}
-				
-//		  		ÅĞ¶Ï½»»¥ÊÖ
-		  		public static boolean getInteractHand(PlayerInteractEvent evt)
-		  		{
-		  			if(evt.getHand()==null||!evt.getHand().equals(EquipmentSlot.HAND))
-					return true;
-		  			else
-		  			return false;
-		  		}
-		  		
-//		  		ÅĞ¶Ï·ÅÖÃÊÖ
-		  		public static boolean getPlaceHand(BlockPlaceEvent evt)
-		  		{
-		  			if(evt.getHand()==null||!evt.getHand().equals(EquipmentSlot.HAND))
-					return true;
-		  			else
-		  			return false;
-		  		}
-		  		
-//				°Ñ¼¸ÂÊ%×ª»¯ÎªÕæÕıµÄ°Ù·Ö±È
-				public static double PercentageNumber(String percentage) {
-					double a = 0;
-					try {
-						a = Double.parseDouble(percentage.replace("%", ""))/100;
-					} catch (Exception b) {
-						return 9.99;
-					}
-					return a;
-				}
-				
-//				°Ñ¼¸ÂÊ%×ª»¯ÎªÕæÕıµÄ°Ù·Ö±È,²¢ÇÒ½øĞĞ³Ë·¨¼ÆËã
-				public static double Percentage(double number,String percentage) {
-					try {
-						number = number * (Double.parseDouble(percentage.replace("%", ""))/100);
-					} catch (Exception a) {
-						return 9.99;
-					}
-					return number;
-				}
+    //		å‘½ä»¤åˆ¤æ–­æ˜¯å¦ä¸ºæ§åˆ¶å°ï¼Œæ˜¯åˆ™true
+    public static boolean consoleUse(CommandSender sender) {
+        return !(sender instanceof Player);
+    }
+
+    //		åºåˆ—åŒ–ItemStack
+    public static String getItemData(ItemStack item, boolean one) {
+        try {
+            int amount = item.getAmount();
+            if (one) {
+                item.setAmount(1);
+            }
+            String data = new StreamSerializer().serializeItemStack(item);
+            item.setAmount(amount);
+            return data;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    //		ååºåˆ—åŒ–ItemStack
+    public static ItemStack getItemStack(String data) {
+        try {
+            return new StreamSerializer().deserializeItemStack(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //		ç”Ÿæˆé•¿åº¦å›ºå®šçš„éšæœºå­—ç¬¦ä¸²
+    public static String createRandomString(int length) {
+        String number = "";
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            String str = random.nextInt(2) % 2 == 0 ? "num" : "char";
+            if ("char".equalsIgnoreCase(str)) {
+                int nextInt = random.nextInt(2) % 2 == 0 ? 65 : 97;
+                number += (char) (nextInt + random.nextInt(26));
+            } else {
+                number += String.valueOf(random.nextInt(10));
+            }
+        }
+        return number;
+    }
+
+    //		è·å–ç©å®¶èƒŒåŒ…ç©ºæ ¼æ•°
+    public static int backpackEmptyNumber(Player player) {
+        int number = 0;
+        int empty = 0;
+        while (number <= 35) {
+            if (player.getInventory().getItem(number) == null) {
+                empty++;
+            }
+            number++;
+        }
+        return empty;
+    }
+
+    //		å¢åŠ /æ‰£é™¤ç©å®¶çš„ç»éªŒï¼ˆæ”¯æŒè´Ÿæ•°é™çº§ï¼‰
+    public static void giveExp(Player player, int xp) {
+        int level = player.getLevel();
+        int toNextLevel = getUpgradeExp(level);
+        int floatExp = (int) (player.getExp() * toNextLevel) + xp;
+        while (floatExp >= toNextLevel) {
+            floatExp -= toNextLevel;
+            toNextLevel = getUpgradeExp(++level);
+        }
+        while (floatExp < 0) {
+            floatExp += (toNextLevel = getUpgradeExp(--level));
+            if (level < 0) {
+                level = floatExp = 0;
+            }
+        }
+        player.setLevel(level);
+        player.setExp((float) floatExp / toNextLevel);
+        player.setTotalExperience(getTotalExp(level) + floatExp);
+    }
+
+    public static int getUpgradeExp(int level) {
+        return level < 16 ? level * 2 + 7 : level < 30 ? level * 5 - 38 : level * 9 - 158;
+    }
+
+    public static int getTotalExp(int level) {
+        return (int) (level < 17 ? level * (level + 6) : level < 31 ? level * (level * 2.5 - 40.5) + 360 : level * (level * 4.5 - 162.5) + 2220);
+    }
+
+    //		ç»™äºˆç©å®¶ç‰©å“ï¼Œå¦‚æœèƒŒåŒ…æ»¡åˆ™åœ¨åŸåœ°ç”Ÿæˆæ‰è½ç‰©
+    public static void giveItem(Player player, ItemStack item) {
+        if (item == null || item.getType() == Material.AIR) {
+            return;
+        }
+        for (ItemStack i : player.getInventory().addItem(item).values()) {
+            player.getWorld().dropItemNaturally(player.getLocation(), item);
+        }
+    }
+
+    //		åˆ¤æ–­ç©å®¶æ˜¯å¦ä¸ºç©ºæ‰‹ï¼Œç©ºæ‰‹åˆ™true
+    public static Boolean emptyItem(Player player) {
+        return player.getInventory().getItemInHand() == null || player.getInventory().getItemInHand().getType() == Material.AIR;
+    }
+
+
+    //		è¿”å›è¿™ä¸ªç‰©å“çš„NBT
+    //		éœ€åå°„
+    public static String getItemNBT(ItemStack item) {
+        Class<?> nbttagcompound;
+        Class<?> itemstack;
+        Method asNMSCopy;
+        Method save;
+        Class<?> saveitem;
+        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+        try {
+            saveitem = Class.forName("net.minecraft.server." + version + ".ItemStack");
+            itemstack = Class.forName("org.bukkit.craftbukkit." + version + ".inventory.CraftItemStack");
+            nbttagcompound = Class.forName("net.minecraft.server." + version + ".NBTTagCompound");
+            asNMSCopy = itemstack.getMethod("asNMSCopy", ItemStack.class);
+            save = saveitem.getMethod("save", nbttagcompound);
+
+            Object tag = nbttagcompound.newInstance();
+            Object nmsitem = asNMSCopy.invoke(null, item);
+            Object saves = save.invoke(nmsitem, tag);
+
+            return saves.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "null";
+        }
+    }
+
+    //		éå†æ•°ç»„ï¼Œæ›¿æ¢æ•°ç»„å­—ç¬¦ä¸²
+    public static List<String> listReplace(List<String> list, String wasReplaced, String replace) {
+        ArrayList<String> news = new ArrayList<>();
+        for (String s : list) {
+            news.add(s.replace(wasReplaced, replace));
+        }
+        return news;
+    }
+
+    //	  	åˆ¤æ–­äº¤äº’æ‰‹
+    public static boolean getInteractHand(PlayerInteractEvent evt) {
+        return evt.getHand() == null || !evt.getHand().equals(EquipmentSlot.HAND);
+    }
+
+    //	  	åˆ¤æ–­æ”¾ç½®æ‰‹
+    public static boolean getPlaceHand(BlockPlaceEvent evt) {
+        return evt.getHand() == null || !evt.getHand().equals(EquipmentSlot.HAND);
+    }
+
+    //		æŠŠå‡ ç‡%è½¬åŒ–ä¸ºçœŸæ­£çš„ç™¾åˆ†æ¯”
+    public static double percentageNumber(String percentage) {
+        try {
+            return Double.parseDouble(percentage.replace("%", "")) / 100;
+        } catch (Exception b) {
+            return 9.99;
+        }
+    }
+
+    //		æŠŠå‡ ç‡%è½¬åŒ–ä¸ºçœŸæ­£çš„ç™¾åˆ†æ¯”,å¹¶ä¸”è¿›è¡Œä¹˜æ³•è®¡ç®—
+    public static double percentage(double number, String percentage) {
+        try {
+            number = number * (Double.parseDouble(percentage.replace("%", "")) / 100);
+        } catch (Exception a) {
+            return 9.99;
+        }
+        return number;
+    }
+
+    //		æŠŠç©å®¶ä¼ é€åˆ°è¿™ä¸ªåŒºå—ä½ç½®
+    public static void telePortChunk(Player player, World world, Chunk chunk) {
+        Location location = player.getLocation();
+        location.setWorld(world);
+        double x = chunk.getX() * 16;
+        double z = chunk.getZ() * 16;
+        location.setX(x);
+        location.setZ(z);
+        location.setY(world.getHighestBlockAt(location).getY());
+        player.teleport(location);
+    }
+
+    //		è¿”å›è¿™ä¸ªä¸–ç•Œçš„ç©å®¶æ•°
+    public static int playerNumber(World world) {
+        int i = 0;
+        for (Entity entity : world.getEntities()) {
+            if (entity instanceof Player) {
+                i++;
+            }
+        }
+        return i;
+    }
+
+    //		è¿”å›æœåŠ¡å™¨æ€»MS
+    public static double getMS() {
+        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+        try {
+            Class<?> minecraftserver = Class.forName("net.minecraft.server." + version + ".MinecraftServer");
+            Method getserver = minecraftserver.getMethod("getServer");
+            Class<?> c = getserver.invoke(minecraftserver).getClass();
+
+            Field h = null;
+            for (Field field : c.getFields()) {
+                if (field.getType().getName().equalsIgnoreCase("[J")) {
+                    h = field;
+                    break;
+                }
+            }
+
+            long average = 0;
+            for (long b : (long[]) h.get(getserver.invoke(minecraftserver))) {
+                average += b;
+            }
+            average /= ((long[]) h.get(getserver.invoke(minecraftserver))).length;
+
+            return average * 1e-6;
+        } catch (Exception a) {
+            return 0;
+        }
+    }
+
+    //		è¿”å›æœåŠ¡å™¨æ€»TPS
+    public static double getTPS() {
+        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+        try {
+            Class<?> minecraftserver = Class.forName("net.minecraft.server." + version + ".MinecraftServer");
+            Method getserver = minecraftserver.getMethod("getServer");
+
+            Field h = null;
+            for (Field field : minecraftserver.getFields()) {
+                if (field.getType().getName().equalsIgnoreCase("[J")) {
+                    h = field;
+                    break;
+                }
+            }
+
+            long average = 0;
+            for (long b : (long[]) h.get(getserver.invoke(minecraftserver))) {
+                average += b;
+            }
+            average /= ((long[]) h.get(getserver.invoke(minecraftserver))).length;
+
+
+            return Math.min(1000 / (average * 1e-6), 20.0);
+        } catch (Exception a) {
+            return 0;
+        }
+    }
+
+    //		éšæœºä¸€ä¸ªèŒƒå›´çš„æ•°å­—
+    public static int randomNumber(int min, int max) {
+        return new Random().nextInt(max - min + 1) + min;
+    }
+
+    //    è·å–è¿™ä¸ªæœˆæœ‰å¤šå°‘å¤©
+    public static int getMonthDay() {
+        String timegroup = new SimpleDateFormat("yyyy:MM").format(new Date());
+        int nowYear = Integer.parseInt(timegroup.split(":")[0]);
+        int nowMonth = Integer.parseInt(timegroup.split(":")[1]);
+        if (nowMonth == 1 || nowMonth == 3 || nowMonth == 5 || nowMonth == 7 || nowMonth == 8 || nowMonth == 10 || nowMonth == 12) {
+            return 31;
+        } else if (nowMonth == 2) {
+            if (nowYear % 4 == 0 && nowYear % 100 != 0) {
+                return 29;
+            } else {
+                return 28;
+            }
+        } else {
+            return 30;
+        }
+    }
+
+    public static int getMonthDay(int nowMonth) {
+        String timegroup = new SimpleDateFormat("yyyy").format(new Date());
+        int nowYear = Integer.parseInt(timegroup.split(":")[0]);
+        if (nowMonth == 1 || nowMonth == 3 || nowMonth == 5 || nowMonth == 7 || nowMonth == 8 || nowMonth == 10 || nowMonth == 12) {
+            return 31;
+        } else if (nowMonth == 2) {
+            if (nowYear % 4 == 0 && nowYear % 100 != 0) {
+                return 29;
+            } else {
+                return 28;
+            }
+        } else {
+            return 30;
+        }
+    }
+
+    public static int getMonthDay(int nowMonth, int nowYear) {
+        if (nowMonth == 1 || nowMonth == 3 || nowMonth == 5 || nowMonth == 7 || nowMonth == 8 || nowMonth == 10 || nowMonth == 12) {
+            return 31;
+        } else if (nowMonth == 2) {
+            if (nowYear % 4 == 0 && nowYear % 100 != 0) {
+                return 29;
+            } else {
+                return 28;
+            }
+        } else {
+            return 30;
+        }
+    }
+
+    //    è·å–ç³»ç»Ÿæ—¶é—´+è¾“å…¥çš„æ—¶é—´
+    public static String getTime() {
+        String timegroup = new SimpleDateFormat("yyyy:MM:dd:HH:mm").format(new Date());
+        int nowYear = Integer.parseInt(timegroup.split(":")[0]);
+        int nowMonth = Integer.parseInt(timegroup.split(":")[1]);
+        int nowDay = Integer.parseInt(timegroup.split(":")[2]);
+        int nowHour = Integer.parseInt(timegroup.split(":")[3]);
+        int nowMinute = Integer.parseInt(timegroup.split(":")[4]);
+        return nowYear + ":" + nowMonth + ":" + nowDay + ":" + nowHour + ":" + nowMinute;
+    }
+
+    public static String getTime(int m) {
+        String timegroup = new SimpleDateFormat("yyyy:MM:dd:HH:mm").format(new Date());
+        int nowYear = Integer.parseInt(timegroup.split(":")[0]);
+        int nowMonth = Integer.parseInt(timegroup.split(":")[1]);
+        int nowDay = Integer.parseInt(timegroup.split(":")[2]);
+        int nowHour = Integer.parseInt(timegroup.split(":")[3]);
+        int nowMinute = Integer.parseInt(timegroup.split(":")[4]);
+
+        int monthday = getMonthDay();
+
+        int minute = m + nowMinute;
+        int hour = nowHour;
+        int day = nowDay;
+        int month = nowMonth;
+        int year = nowYear;
+
+        if (minute >= 60) {
+            hour += minute / 60;
+            minute %= 60;
+        }
+        if (hour >= 24) {
+            day += hour / 24;
+            hour %= 24;
+        }
+        if (day > monthday) {
+            int t_d = day;
+            int t_m = month;
+            int t_y = year;
+            boolean first = true;
+            while (true) {
+                if (t_d - monthday <= 0) {
+                    if (t_d - monthday != 0) {
+                        if (first) {
+                            month++;
+                        }
+                    }
+                    day = t_d;
+                    break;
+                } else {
+                    first = false;
+                    month++;
+                    t_d -= monthday;
+                    if (++t_m > 12) {
+                        t_m = 1;
+                        t_y += 1;
+                    }
+                    monthday = getMonthDay(t_m, t_y);
+                }
+            }
+        }
+        if (month > 12) {
+            year += month / 12;
+            month %= 12;
+        }
+        return year + ":" + month + ":" + day + ":" + hour + ":" + minute;
+    }
+
+    public static String getTime(int m, int h) {
+        String timegroup = new SimpleDateFormat("yyyy:MM:dd:HH:mm").format(new Date());
+        int nowYear = Integer.parseInt(timegroup.split(":")[0]);
+        int nowMonth = Integer.parseInt(timegroup.split(":")[1]);
+        int nowDay = Integer.parseInt(timegroup.split(":")[2]);
+        int nowHour = Integer.parseInt(timegroup.split(":")[3]);
+        int nowMinute = Integer.parseInt(timegroup.split(":")[4]);
+
+        int monthday = getMonthDay();
+
+        int minute = m + nowMinute;
+        int hour = h + nowHour;
+        int day = nowDay;
+        int month = nowMonth;
+        int year = nowYear;
+
+        if (minute >= 60) {
+            hour += minute / 60;
+            minute %= 60;
+        }
+        if (hour >= 24) {
+            day += hour / 24;
+            hour %= 24;
+        }
+        if (day > monthday) {
+            int t_d = day;
+            int t_m = month;
+            int t_y = year;
+            boolean first = true;
+            while (true) {
+                if (t_d - monthday <= 0) {
+                    if (t_d - monthday != 0) {
+                        if (first) {
+                            month++;
+                        }
+                    }
+                    day = t_d;
+                    break;
+                } else {
+                    first = false;
+                    month++;
+                    t_d -= monthday;
+                    if (++t_m > 12) {
+                        t_m = 1;
+                        t_y += 1;
+                    }
+                    monthday = getMonthDay(t_m, t_y);
+                }
+            }
+        }
+        if (month > 12) {
+            year += month / 12;
+            month %= 12;
+        }
+        return year + ":" + month + ":" + day + ":" + hour + ":" + minute;
+    }
+
+    public static String getTime(int m, int h, int d) {
+        String timegroup = new SimpleDateFormat("yyyy:MM:dd:HH:mm").format(new Date());
+        int nowYear = Integer.parseInt(timegroup.split(":")[0]);
+        int nowMonth = Integer.parseInt(timegroup.split(":")[1]);
+        int nowDay = Integer.parseInt(timegroup.split(":")[2]);
+        int nowHour = Integer.parseInt(timegroup.split(":")[3]);
+        int nowMinute = Integer.parseInt(timegroup.split(":")[4]);
+
+        int monthday = getMonthDay();
+
+        int minute = m + nowMinute;
+        int hour = h + nowHour;
+        int day = d + nowDay;
+        int month = nowMonth;
+        int year = nowYear;
+
+        if (minute >= 60) {
+            hour += minute / 60;
+            minute %= 60;
+        }
+        if (hour >= 24) {
+            day += hour / 24;
+            hour %= 24;
+        }
+        if (day > monthday) {
+            int t_d = day;
+            int t_m = month;
+            int t_y = year;
+            boolean first = true;
+            while (true) {
+                if (t_d - monthday <= 0) {
+                    if (t_d - monthday != 0) {
+                        if (first) {
+                            month++;
+                        }
+                    }
+                    day = t_d;
+                    break;
+                } else {
+                    first = false;
+                    month++;
+                    t_d -= monthday;
+                    if (++t_m > 12) {
+                        t_m = 1;
+                        t_y += 1;
+                    }
+                    monthday = getMonthDay(t_m, t_y);
+                }
+            }
+        }
+        if (month > 12) {
+            year += month / 12;
+            month %= 12;
+        }
+        return year + ":" + month + ":" + day + ":" + hour + ":" + minute;
+    }
+
+    public static String getDay(int m) {
+        int minute = m;
+        int hour = 0;
+        int day = 0;
+
+        if (minute >= 60) {
+            hour += minute / 60;
+            minute %= 60;
+        }
+        if (hour >= 24) {
+            day += hour / 24;
+            hour %= 24;
+        }
+        return day + ":" + hour + ":" + minute;
+    }
+
+    public static String getDay(int m, int h) {
+        int minute = m;
+        int hour = h;
+        int day = 0;
+
+        if (minute >= 60) {
+            hour += minute / 60;
+            minute %= 60;
+        }
+        if (hour >= 24) {
+            day += hour / 24;
+            hour %= 24;
+        }
+        return day + ":" + hour + ":" + minute;
+    }
+
+    public static String getDay(int m, int h, int d) {
+        int minute = m;
+        int hour = h;
+        int day = d;
+
+        if (minute >= 60) {
+            hour += minute / 60;
+            minute %= 60;
+        }
+        if (hour >= 24) {
+            day += hour / 24;
+            hour %= 24;
+        }
+        return day + ":" + hour + ":" + minute;
+    }
+
+    //    å‘ç©å®¶å‘é€actionbar
+    public static void sendActionBar(Player player, String m, int time) {
+        if (time < 3) {
+            time = 3;
+        }
+        int finalTime = time;
+        new BukkitRunnable() {
+            int i = 0;
+
+            @Override
+            public void run() {
+                try {
+                    String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+                    Field playerConnection = Class.forName("net.minecraft.server." + version + ".EntityPlayer").getField("playerConnection");
+                    Class<?> packetPlayOutChat = Class.forName("net.minecraft.server." + version + ".PacketPlayOutChat");
+                    Method send = Class.forName("net.minecraft.server." + version + ".PlayerConnection").getMethod("sendPacket", Class.forName("net.minecraft.server." + version + ".Packet"));
+                    Method getHandle = Class.forName("org.bukkit.craftbukkit." + version + ".entity.CraftPlayer").getMethod("getHandle");
+                    Class<?> iChatBaseComponent = Class.forName("net.minecraft.server." + version + ".IChatBaseComponent");
+                    Class<?> chatComponentText = Class.forName("net.minecraft.server." + version + ".ChatComponentText");
+                    Class<?> chatMessageType = Class.forName("net.minecraft.server." + version + ".ChatMessageType");
+                    Enum e = null;
+                    for (Enum inside_enum : (Enum[]) chatMessageType.getEnumConstants()) {
+                        if (inside_enum.name().equalsIgnoreCase("GAME_INFO")) {
+                            e = inside_enum;
+                            break;
+                        }
+                    }
+                    Object message = chatComponentText.getConstructor(String.class).newInstance(ChatColor.translateAlternateColorCodes('&', m));
+                    Object packet;
+                    try {
+                        packet = packetPlayOutChat.getConstructor(iChatBaseComponent, chatMessageType).newInstance(message, e);
+                    } catch (Exception a) {
+                        packet = packetPlayOutChat.getConstructor(iChatBaseComponent, chatMessageType, player.getUniqueId().getClass()).newInstance(message, e, player.getUniqueId());
+                    }
+                    send.invoke(playerConnection.get(getHandle.invoke(player)), packet);
+
+//                  CraftPlayer cp = (CraftPlayer) sender;
+//                  ChatComponentText c = new ChatComponentText(ChatColor.translateAlternateColorCodes('&', "&f" + args[2]));
+//                  PacketPlayOutChat pack = new PacketPlayOutChat(c, ChatMessageType.GAME_INFO);
+//                  PlayerConnection pc = cp.getHandle().playerConnection;
+//                  pc.sendPacket(pack);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    player.sendMessage("Â§cç‰ˆæœ¬/æœåŠ¡ç«¯ä¸å…¼å®¹ï¼");
+                }
+                i++;
+                if (i >= finalTime - 2) {
+                    cancel();
+                }
+            }
+
+        }.runTaskTimerAsynchronously(Main.plugin, 0, 20);
+    }
+
+    //    ä¿å­˜é…ç½®æ–‡ä»¶æ•°æ®
+    public static void saveConfig(Plugin plugin, FileConfiguration config, String name) {
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                try {
+                    File file = new File(plugin.getDataFolder(), name + ".yml");
+                    config.save(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }.runTask(Main.plugin);
+    }
 }

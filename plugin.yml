@@ -2,7 +2,7 @@ name: CustomChunkLimit
 main: pers.tany.customchunklimit.Main
 version: 1.6.0
 author: tany
-api-version: 1.13
+description: 区块限制方块放置
 depend: [ProtocolLib,NBTAPI]
 commands:
   customchunklimit:

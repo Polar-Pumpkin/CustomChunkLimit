@@ -17,5 +17,5 @@ YAxis: 32
 #是否检测方块Tile
 Tile: true
 
-#是否检测植魔花
+#是否检测植魔花（1.7.10无法区分）
 Botania: true
