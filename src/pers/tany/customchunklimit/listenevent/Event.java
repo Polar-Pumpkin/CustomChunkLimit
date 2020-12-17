@@ -1,17 +1,7 @@
 package pers.tany.customchunklimit.listenevent;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
-
-import de.tr7zw.nbtapi.NBTItem;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import de.tr7zw.nbtapi.NBTTileEntity;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,19 +9,29 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-
-import de.tr7zw.nbtapi.NBTTileEntity;
 import pers.tany.customchunklimit.CommonlyWay;
 import pers.tany.customchunklimit.Main;
 import pers.tany.customchunklimit.Other;
 import pers.tany.customchunklimit.gui.Gui;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
+
 public class Event implements Listener {
     File file = new File(Main.plugin.getDataFolder(), "data.yml");
+
+    @EventHandler
+    public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent evt) {
+        Main.Create.remove(evt.getName());
+        Main.CreateAll.remove(evt.getName());
+    }
 
     @EventHandler
     public void Interact(PlayerInteractEvent evt) {
@@ -39,7 +39,7 @@ public class Event implements Listener {
             if (!(evt.getPlayer().getInventory().getItemInHand() == null || evt.getPlayer().getInventory().getItemInHand().getType() == Material.AIR)) {
                 evt.setCancelled(true);
                 if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK) || evt.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-                    String item = CommonlyWay.getItemData(evt.getPlayer().getInventory().getItemInHand());
+                    String item = CommonlyWay.getItemData(evt.getPlayer().getInventory().getItemInHand(), true);
                     int limit = Main.Create.get(evt.getPlayer().getName());
                     String block = evt.getClickedBlock().getType().getId() + ":" + evt.getClickedBlock().getData();
                     String a = "";
@@ -123,7 +123,7 @@ public class Event implements Listener {
         if (Main.CreateAll.containsKey(evt.getPlayer().getName())) {
             if (!(evt.getPlayer().getInventory().getItemInHand() == null || evt.getPlayer().getInventory().getItemInHand().getType() == Material.AIR)) {
                 if (evt.getAction().equals(Action.RIGHT_CLICK_BLOCK) || evt.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-                    String item = CommonlyWay.getItemData(evt.getPlayer().getInventory().getItemInHand());
+                    String item = CommonlyWay.getItemData(evt.getPlayer().getInventory().getItemInHand(), true);
                     int limit = Main.CreateAll.get(evt.getPlayer().getName());
                     String block = evt.getClickedBlock().getType().getId() + ":999";
                     if (Other.data.getConfigurationSection("Block").getKeys(false).size() > 0) {
@@ -814,12 +814,12 @@ public class Event implements Listener {
         }
         if (evt.getCurrentItem().getItemMeta().hasDisplayName() && evt.getCurrentItem().getItemMeta().getDisplayName().equals("§a上")) {
             int pager = Integer.parseInt(player.getOpenInventory().getTitle().replace("§a已被§c限制§a物品列表第", "").replace("页", ""));
-            Gui.list(player, pager--);
+            Gui.list(player, pager-1);
             return;
         }
         if (evt.getCurrentItem().getItemMeta().hasDisplayName() && evt.getCurrentItem().getItemMeta().getDisplayName().equals("§a下")) {
             int pager = Integer.parseInt(player.getOpenInventory().getTitle().replace("§a已被§c限制§a物品列表第", "").replace("页", ""));
-            Gui.list(player, pager++);
+            Gui.list(player, pager+1);
             return;
         }
         if (evt.getRawSlot() > 44) {
